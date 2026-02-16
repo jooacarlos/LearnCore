@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Entrando na Sala...</title>
+</head>
+<body>
+  <p>Entrando na sala, aguarde...</p>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const codigo = params.get('codigo');
+    const token = localStorage.getItem('token');
+
+    if (!codigo || !token) {
+      alert('Código ou autenticação inválida.');
+      window.location.replace('loginAluno.html');
+    } else {
+      fetch(`http://localhost:3000/api/salas/entrar?codigo=${codigo}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.salaId) {
+          // Redireciona para a página da sala
+          window.location.replace(`turmasDetailsAlun.html?id=${data.salaId}`);
+        } else {
+          alert(data.message || 'Erro ao entrar na sala.');
+          window.location.replace('dashboardAlu.html');
+        }
+      })
+      .catch(() => {
+        alert('Erro ao conectar com o servidor.');
+        window.location.replace('dashboardAlu.html');
+      });
+    }
+  </script>
+</body>
+</html>

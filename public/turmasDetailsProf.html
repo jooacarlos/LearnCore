@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>EduFuturo - Portal do Professor</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width" />
+  <link rel="stylesheet" href="./css/turmaDetailProf.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  />
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --sidebar-width: 250px;
+      --header-height: 60px;
+      --excellent-color: #059669;
+      --good-color: #0284c7;
+      --average-color: #ca8a04;
+      --poor-color: #dc2626;
+      --background-color: #f3f4f6;
+      --text-color: #374151;
+    }
+     .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
+    z-index: 1;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .dropdown-item {
+    width: 100%;
+    padding: 8px 16px;
+    text-align: left;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--text-color);
+  }
+  
+  .dropdown-item:hover {
+    background-color: var(--background-color);
+  }
+  
+  .dropdown-item.text-danger {
+    color: var(--poor-color);
+  }
+  
+  .dropdown-item.text-danger:hover {
+    background-color: #fee2e2;
+  }
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--sidebar-width);
+      height: 100vh;
+      background-color: white;
+      box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+      padding: 2rem 0;
+    }
+
+    .sidebar .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      padding: 0 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .sidebar-nav li a {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 2rem;
+      color: #4b5563;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav li a i {
+      margin-right: 0.75rem;
+      width: 20px;
+      
+    }
+
+    .sidebar-nav li a:hover {
+      background-color: var(--background-color);
+      color: var(--primary-color);
+    }
+
+    .sidebar-nav li a.active {
+      background-color: #eff6ff;
+      color: var(--primary-color);
+    
+    }
+
+    /* Ajuste no main-content para não ficar atrás da sidebar */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      padding: 1rem 2rem;
+    }
+    .welcome-card {
+  background-color: var(--background-color);
+  border-radius: 12px;
+  padding: 25px 30px;
+  box-shadow: 0 6px 12px rgba(37, 99, 235, 0.2);
+  max-width: 700px;
+  margin: 30px auto;
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-color);
+  border: 2px solid var(--primary-color);
+}
+
+.welcome-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+.welcome-header h3 {
+  font-weight: 700;
+  font-size: 1.7rem;
+  color: var(--primary-color);
+}
+
+.welcome-header i {
+  color: var(--primary-color);
+  font-size: 2rem;
+}
+
+.welcome-content p {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  margin-bottom: 15px;
+}
+
+.welcome-content ul {
+  list-style: inside disc;
+  margin-bottom: 20px;
+  color: var(--text-color);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.welcome-content ul li {
+  margin-bottom: 10px;
+}
+
+.welcome-content ul li strong {
+  color: var(--primary-color);
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">LeanCore</div>
+      <nav>
+              <ul class="sidebar-nav">
+        <li><a href="./dashBoardProf.html" ><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="./turmasProf.html" class="active"><i class="fas fa-users"></i> Turmas</a></li>
+        <li><a href="./atividadesProf.html" ><i class="fas fa-tasks"></i> Atividades</a></li>
+       <li><a href="./dadosProf.html"><i class="fas fa-cog"></i> Configurações</a></li>
+        <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+      </ul>
+      </nav>
+    </aside>
+
+
+      <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+          <div class="teacher-info" id="teacher-header">
+            <img src="https://i.pravatar.cc/150?img=8" alt="Foto do Professor" class="teacher-photo">
+            <div class="teacher-details">
+              <h2>Carregando...</h2>
+              <p>Professor - Carregando...</p>
+            </div>
+          </div>
+          <div class="header-actions">
+            <div class="search-bar">
+              <input type="text" placeholder="Pesquisar alunos, atividades...">
+              <i class="fas fa-search"></i>
+            </div>
+            <div class="notification-area">
+              <div class="notification-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">0</span>
+              </div>
+              <div class="notification-icon">
+                <i class="fas fa-envelope"></i>
+                <span class="notification-badge">0</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb" id="breadcrumb">
+          <a href="#">Minhas Turmas</a>
+          <i class="fas fa-chevron-right"></i>
+          <span>Carregando...</span>
+        </div>
+
+        <!-- Class Content -->
+        <div class="class-container">
+          <!-- Class Header with Stats -->
+          <div class="class-header">
+            <div class="class-info">
+              <div class="class-title-section">
+                <h1 id="class-name">Carregando...</h1>
+                <button class="edit-class-btn"><i class="fas fa-edit"></i></button>
+              </div>
+              <p class="class-code" id="class-code">Código da turma: Carregando...</p>
+              <div class="class-stats" id="class-stats">
+                <div class="stat-item">
+                  <i class="fas fa-users"></i>
+                  <span>0 alunos matriculados</span>
+                </div>
+                <div class="stat-item">
+                  <i class="fas fa-book"></i>
+                  <span>0 horas/semestre</span>
+                </div>
+             
+              </div>
+            </div>
+            <div class="quick-actions">
+              <button class="action-btn primary" id="new-activity-btn"><i class="fas fa-plus"></i> Nova Atividade</button>
+              <button class="action-btn" id="new-announcement-btn"><i class="fas fa-bullhorn"></i> Novo Aviso</button>
+            </div>
+          </div>
+
+          <div class="content-grid">
+            <!-- Left Column -->
+    <div class="welcome-card">
+  <div class="welcome-header">
+    <h3><i class="fas fa-chalkboard-teacher"></i> Bem-vindo(a), Professor(a)</h3>
+  </div>
+  <div class="welcome-content">
+    <p>
+      Seja bem-vindo(a) à plataforma LearnCore! Para garantir um ambiente eficiente e produtivo, pedimos que:
+    </p>
+    <ul>
+      <li><strong>Comprometa-se</strong> em oferecer feedbacks claros e construtivos para o desenvolvimento dos alunos.</li>
+      <li><strong>Mantenha a organização</strong> das turmas e materiais para facilitar o acompanhamento do progresso.</li>
+      <li><strong>Respeite os prazos</strong> para correção das atividades, garantindo um retorno ágil aos estudantes.</li>
+      <li><strong>Utilize os recursos</strong> da plataforma para potencializar seu trabalho e otimizar o tempo.</li>
+    </ul>
+    <p>
+      Juntos, podemos transformar o processo educacional em uma experiência ainda mais significativa e eficaz!
+    </p>
+  </div>
+</div>
+
+
+
+            <!-- Right Column -->
+            <div class="side-section">
+              <!-- Atividades Pendentes -->
+              <div class="class-card">
+                <div class="card-header">
+                  <h3><i class="fas fa-tasks"></i> Tarefas</h3>
+                  <span class="badge" id="pending-count">0</span>
+                </div>
+                <div class="pending-activities" id="pending-activities">
+                  <div class="loading-content">
+                    <i class="fas fa-spinner fa-spin"></i> Carregando atividades...
+                  </div>
+                </div>
+              </div>
+
+              <!-- Desempenho da Turma -->
+              
+            </div>
+          </div>
+
+          <!-- Student Management -->
+          <div class="student-management-section">
+            <div class="section-header">
+              <h3>Gerenciamento de Alunos</h3>
+              <div class="section-actions">
+                <button class="export-btn"><i class="fas fa-download"></i> Exportar Lista</button>
+                <button class="add-student-btn"><i class="fas fa-user-plus"></i> Adicionar Aluno</button>
+              </div>
+            </div>
+            <div class="student-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Aluno</th>
+                    <th>Matrícula</th>
+                    <th>Frequência</th>
+                    <th>Média</th>
+                    <th>Última Atividade</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="students-table-body">
+                  <tr>
+                    <td colspan="6" class="loading-content">
+                      <i class="fas fa-spinner fa-spin"></i> Carregando alunos...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+<!-- Modal para Novo Aviso -->
+<div id="announcement-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Criar Novo Aviso</h3>
+      <button id="close-modal" class="close-btn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="announcement-form">
+        <div class="form-group">
+          <label for="announcement-title">Título</label>
+          <input type="text" id="announcement-title" placeholder="Digite o título do aviso" required>
+        </div>
+        <div class="form-group">
+          <label for="announcement-content">Conteúdo</label>
+          <textarea id="announcement-content" rows="5" placeholder="Digite o conteúdo do aviso" required></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="cancel-announcement">Cancelar</button>
+          <button type="submit" class="action-btn primary">Publicar Aviso</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div><!-- Modal para Adicionar Aluno (novo) -->
+<div id="add-student-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Adicionar Aluno à Turma</h3>
+      <button id="close-student-modal" class="close-btn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="by-matricula">Por Matrícula</button>
+        <button class="tab-btn" data-tab="by-link">Gerar Link</button>
+      </div>
+      
+      <div class="tab-content active" id="by-matricula-tab">
+        <form id="add-student-form">
+          <div class="form-group">
+            <label for="student-id">Matrícula do Aluno</label>
+            <input type="text" id="student-id" placeholder="Digite a matrícula do aluno" required>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="cancel-add-student">Cancelar</button>
+            <button type="submit" class="action-btn primary">Adicionar Aluno</button>
+          </div>
+        </form>
+      </div>
+      
+      <div class="tab-content" id="by-link-tab">
+        <div class="link-container">
+          <p>Compartilhe este link com o aluno para que ele possa se juntar à turma:</p>
+          <div class="link-box">
+            <input type="text" id="invite-link" readonly>
+            <button id="copy-link-btn" class="action-btn">
+              <i class="fas fa-copy"></i> Copiar
+            </button>
+          </div>
+          <div class="link-options">
+            <button class="action-btn" id="generate-new-link">
+              <i class="fas fa-sync-alt"></i> Gerar Novo Link
+            </button>
+            <button class="action-btn" id="share-link">
+              <i class="fas fa-share-alt"></i> Compartilhar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="delete-student-modal" class="modal" style="display: none;">
+  <div class="modal-content" style="max-width: 400px;">
+    <div class="modal-header">
+      <h3>Confirmar Exclusão</h3>
+      <button class="close-btn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>Tem certeza que deseja remover este aluno da turma?</p>
+      <div class="form-actions" style="justify-content: flex-end; margin-top: 20px;">
+        <button type="button" class="btn-secondary" id="cancel-delete-student">Cancelar</button>
+        <button type="button" class="action-btn primary" id="confirm-delete-student">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// =============================================
+// CONFIGURAÇÕES GLOBAIS E CONSTANTES
+// =============================================
+const API_BASE_URL = 'http://localhost:3000/api';
+const MODAL_TYPES = {
+  ANNOUNCEMENT: 'announcement',
+  ADD_STUDENT: 'add-student',
+  DELETE_STUDENT: 'delete-student'
+};
+
+// =============================================
+// ESTADO DA APLICAÇÃO
+// =============================================
+let currentUser = null;
+let currentClass = null;
+let currentClassId = null;
+let currentStudentId = null; // Adicionado para controle do aluno a ser excluído
+
+// =============================================
+// ELEMENTOS DA UI
+// =============================================
+const UI = {
+  // Elementos principais
+  teacherHeader: document.getElementById('teacher-header'),
+  breadcrumb: document.getElementById('breadcrumb'),
+  className: document.getElementById('class-name'),
+  classCode: document.getElementById('class-code'),
+  classStats: document.getElementById('class-stats'),
+  contentManagement: document.getElementById('content-management'),
+  pendingActivities: document.getElementById('pending-activities'),
+  pendingCount: document.getElementById('pending-count'),
+  studentsTableBody: document.getElementById('students-table-body'),
+  classAverage: document.getElementById('class-average'),
+  deliveryRate: document.getElementById('delivery-rate'),
+  
+  // Botões e ações
+  logoutBtn: document.getElementById('logout'),
+  newActivityBtn: document.getElementById('new-activity-btn'),
+  newAnnouncementBtn: document.getElementById('new-announcement-btn'),
+  addContentBtn: document.getElementById('add-content-btn'),
+  addStudentBtn: document.querySelector('.add-student-btn'),
+  
+  // Modais
+  modals: {
+    [MODAL_TYPES.ANNOUNCEMENT]: {
+      element: document.getElementById('announcement-modal'),
+      closeBtn: document.getElementById('close-modal'),
+      cancelBtn: document.getElementById('cancel-announcement'),
+      form: document.getElementById('announcement-form')
+    },
+    [MODAL_TYPES.ADD_STUDENT]: {
+      element: document.getElementById('add-student-modal'),
+      closeBtn: document.getElementById('close-student-modal'),
+      cancelBtn: document.getElementById('cancel-add-student'),
+      form: document.getElementById('add-student-form'),
+      tabBtns: document.querySelectorAll('.tab-btn'),
+      tabContents: document.querySelectorAll('.tab-content'),
+      inviteLinkInput: document.getElementById('invite-link'),
+      copyLinkBtn: document.getElementById('copy-link-btn'),
+      generateNewLinkBtn: document.getElementById('generate-new-link'),
+      shareLinkBtn: document.getElementById('share-link')
+    },
+    [MODAL_TYPES.DELETE_STUDENT]: {
+      element: document.getElementById('delete-student-modal'),
+      closeBtn: document.querySelector('#delete-student-modal .close-btn'),
+      cancelBtn: document.getElementById('cancel-delete-student'),
+      confirmBtn: document.getElementById('confirm-delete-student')
+    }
+  }
+};
+
+// =============================================
+// SERVIÇOS DA API
+// =============================================
+const ApiService = {
+  async fetchAuth(url, options = {}) {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        this.redirectToLogin();
+        throw new Error('Token não encontrado');
+      }
+      
+      const response = await fetch(`${API_BASE_URL}${url}`, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          ...options.headers
+        }
+      });
+      
+      if (response.status === 401) {
+        this.redirectToLogin();
+        throw new Error('Não autorizado');
+      }
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro na requisição');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Erro na requisição:', error);
+      this.showError('Erro ao carregar dados. Por favor, tente novamente.');
+      throw error;
+    }
+  },
+
+  redirectToLogin() {
+    localStorage.removeItem('token');
+    window.location.href = '/login.html';
+  },
+
+  showError(message) {
+    alert(message);
+  },
+
+  // Métodos específicos
+  async loadTeacherData() {
+    try {
+      const data = await this.fetchAuth('/users/me');
+      return data.data;
+    } catch (error) {
+      console.error('Erro ao carregar dados do professor:', error);
+      return null;
+    }
+  },
+
+  async loadClassData(classId) {
+    try {
+      const data = await this.fetchAuth(`/salas/${classId}/dashboard`);
+      return data.data;
+    } catch (error) {
+      console.error('Erro ao carregar dados da turma:', error);
+      return null;
+    }
+  },
+
+  async loadClassStudents(classId) {
+    try {
+      const data = await this.fetchAuth(`/salas/${classId}/alunos`);
+      return data.data || [];
+    } catch (error) {
+      console.error('Erro ao carregar alunos:', error);
+      return [];
+    }
+  },
+
+  async loadClassTasks(classId, status = 'ativa') {
+    try {
+      const data = await this.fetchAuth(`/tarefas?turmaId=${classId}&status=${status}`);
+      return data.data || [];
+    } catch (error) {
+      console.error('Erro ao carregar tarefas:', error);
+      return [];
+    }
+  },
+
+  async addStudentToClass(classId, studentId) {
+    try {
+      await this.fetchAuth(`/salas/${classId}/alunos`, {
+        method: 'POST',
+        body: JSON.stringify({ matricula: studentId })
+      });
+      return true;
+    } catch (error) {
+      console.error('Erro ao adicionar aluno:', error);
+      return false;
+    }
+  },
+
+  async removeStudentFromClass(classId, studentId) {
+    try {
+      const response = await this.fetchAuth(`/salas/${classId}/alunos/${studentId}`, {
+        method: 'DELETE'
+      });
+      return response.success;
+    } catch (error) {
+      console.error('Erro ao remover aluno:', error);
+      return false;
+    }
+  },
+
+async generateInviteLink(classId) {
+  try {
+    const response = await this.fetchAuth(`/salas/${classId}/link-convite`);
+    return {
+      link: `${window.location.origin}/loginAluno.html?codigo=${response.codigoAcesso}`,
+      codigoAcesso: response.codigoAcesso
+    };
+  } catch (error) {
+    console.error('Erro ao gerar link:', error);
+    const fallbackCodigo = currentClass?.turma?.codigoAcesso || 'GERAR-CODIGO';
+    const fallbackLink = `${window.location.origin}/loginAluno.html?codigo=${fallbackCodigo}`;
+    return {
+      link: fallbackLink,
+      codigoAcesso: fallbackCodigo
+    };
+  }
+}
+
+};
+
+// =============================================
+// GERENCIAMENTO DE MODAIS
+// =============================================
+const ModalManager = {
+  openModal(modalType) {
+    if (!UI.modals[modalType]) return;
+    UI.modals[modalType].element.style.display = 'flex';
+    
+    // Ações específicas ao abrir modal
+    if (modalType === MODAL_TYPES.ADD_STUDENT) {
+      this.generateInviteLink();
+    }
+  },
+
+  closeModal(modalType) {
+    if (!UI.modals[modalType]) return;
+    UI.modals[modalType].element.style.display = 'none';
+  },
+
+  setupModal(modalType) {
+    if (!UI.modals[modalType]) return;
+
+    const modal = UI.modals[modalType];
+    
+    // Fechar modal
+    modal.closeBtn.addEventListener('click', () => {
+      this.closeModal(modalType);
+    });
+    
+    if (modal.cancelBtn) {
+      modal.cancelBtn.addEventListener('click', () => {
+        this.closeModal(modalType);
+      });
+    }
+    
+    // Fechar ao clicar fora
+    modal.element.addEventListener('click', (e) => {
+      if (e.target === modal.element) {
+        this.closeModal(modalType);
+      }
+    });
+  },
+
+  setupAddStudentModal() {
+    const modalType = MODAL_TYPES.ADD_STUDENT;
+    const modal = UI.modals[modalType];
+    
+    if (!modal) return;
+
+    // Controle das abas
+    modal.tabBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        // Remover classe active de todos
+        modal.tabBtns.forEach(b => b.classList.remove('active'));
+        modal.tabContents.forEach(c => c.classList.remove('active'));
+        
+        // Adicionar ao botão clicado
+        this.classList.add('active');
+        
+        // Mostrar conteúdo correspondente
+        const tabId = this.getAttribute('data-tab') + '-tab';
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+    
+    // Copiar link
+    modal.copyLinkBtn.addEventListener('click', function() {
+      modal.inviteLinkInput.select();
+      document.execCommand('copy');
+      
+      // Feedback visual
+      const originalText = this.innerHTML;
+      this.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+      setTimeout(() => {
+        this.innerHTML = originalText;
+      }, 2000);
+    });
+    
+    // Gerar novo link
+    modal.generateNewLinkBtn.addEventListener('click', () => this.generateInviteLink());
+    
+    // Compartilhar link
+    modal.shareLinkBtn.addEventListener('click', this.shareInviteLink.bind(this));
+    
+    // Enviar formulário de matrícula
+    modal.form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const studentId = document.getElementById('student-id').value;
+      
+      const success = await ApiService.addStudentToClass(currentClassId, studentId);
+      if (success) {
+        this.closeModal(modalType);
+        modal.form.reset();
+        alert('Aluno adicionado com sucesso!');
+        
+        // Recarregar lista de alunos
+        const students = await ApiService.loadClassStudents(currentClassId);
+        Renderer.renderStudentsTable(students);
+      }
+    });
+  },
+
+  async generateInviteLink() {
+    try {
+      const { link, codigoAcesso } = await ApiService.generateInviteLink(currentClassId);
+      UI.modals[MODAL_TYPES.ADD_STUDENT].inviteLinkInput.value = link;
+      return { link, codigoAcesso };
+    } catch (error) {
+      console.error('Erro ao gerar link:', error);
+      const fallbackLink = `${window.location.origin}/entrar-sala?codigo=${currentClass?.turma?.codigoAcesso || 'GERAR-CODIGO'}`;
+      UI.modals[MODAL_TYPES.ADD_STUDENT].inviteLinkInput.value = fallbackLink;
+      return { link: fallbackLink, codigoAcesso: currentClass?.turma?.codigoAcesso || 'GERAR-CODIGO' };
+    }
+  },
+
+  shareInviteLink() {
+    const link = UI.modals[MODAL_TYPES.ADD_STUDENT].inviteLinkInput.value;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: 'Convite para turma',
+        text: 'Junte-se à minha turma no EduFuturo',
+        url: link
+      }).catch(err => {
+        console.error('Erro ao compartilhar:', err);
+      });
+    } else {
+      alert('Link copiado para a área de transferência!');
+      UI.modals[MODAL_TYPES.ADD_STUDENT].inviteLinkInput.select();
+      document.execCommand('copy');
+    }
+  },
+
+  setupDeleteStudentModal() {
+    const modal = UI.modals[MODAL_TYPES.DELETE_STUDENT];
+    if (!modal) return;
+
+    // Fechar modal
+    modal.closeBtn.addEventListener('click', () => {
+      this.closeDeleteStudentModal();
+    });
+    
+    modal.cancelBtn.addEventListener('click', () => {
+      this.closeDeleteStudentModal();
+    });
+
+    // Confirmar exclusão
+    modal.confirmBtn.addEventListener('click', async () => {
+      if (!currentStudentId) return;
+      
+      const success = await ApiService.removeStudentFromClass(currentClassId, currentStudentId);
+      if (success) {
+        alert('Aluno removido com sucesso!');
+        this.closeDeleteStudentModal();
+        
+        // Recarregar lista de alunos
+        const students = await ApiService.loadClassStudents(currentClassId);
+        Renderer.renderStudentsTable(students);
+      } else {
+        alert('Erro ao remover aluno. Por favor, tente novamente.');
+      }
+    });
+
+    // Fechar ao clicar fora
+    modal.element.addEventListener('click', (e) => {
+      if (e.target === modal.element) {
+        this.closeDeleteStudentModal();
+      }
+    });
+  },
+
+  openDeleteStudentModal(studentId) {
+    currentStudentId = studentId;
+    UI.modals[MODAL_TYPES.DELETE_STUDENT].element.style.display = 'flex';
+  },
+
+  closeDeleteStudentModal() {
+    currentStudentId = null;
+    UI.modals[MODAL_TYPES.DELETE_STUDENT].element.style.display = 'none';
+  }
+};
+
+// =============================================
+// RENDERIZAÇÃO DE COMPONENTES
+// =============================================
+const Renderer = {
+  updateTeacherHeader(teacher) {
+    if (!teacher) return;
+
+    const avatarPath = teacher.avatar?.replace(/\\/g, '/');
+    const avatarURL = avatarPath
+      ? (avatarPath.startsWith('http') ? avatarPath : `http://localhost:3000/${avatarPath}`)
+      : `https://i.pravatar.cc/150?u=${teacher.email}`;
+
+    UI.teacherHeader.innerHTML = `
+      <img src="${avatarURL}" alt="Foto do Professor" class="teacher-photo">
+      <div class="teacher-details">
+        <h2>${teacher.fullName}</h2>
+        <p>Professor - ${teacher.salas?.[0]?.materias?.[0]?.nome || 'Sem disciplina'}</p>
+      </div>
+    `;
+  },
+
+  updateClassData(classData) {
+    if (!classData?.turma) return;
+    
+    UI.className.textContent = classData.turma.nome;
+    UI.classCode.textContent = `Código da turma: ${classData.turma.codigoAcesso || 'N/A'}`;
+    
+    UI.classStats.innerHTML = `
+      <div class="stat-item">
+        <i class="fas fa-users"></i>
+        <span>${classData.turma.totalAlunos || 0} alunos matriculados</span>
+      </div>
+      <div class="stat-item">
+        <i class="fas fa-book"></i>
+        <span>${classData.turma.materias[0]?.nome || 'Matéria não definida'} - ${classData.turma.materias[0]?.descricao || ''}</span>
+      </div>
+    `;
+    
+    UI.breadcrumb.innerHTML = `
+      <a href="turmasDetailsProf.html">Minhas Turmas</a>
+      <i class="fas fa-chevron-right"></i>
+      <a href="#">${classData.turma.nome}</a>
+      <i class="fas fa-chevron-right"></i>
+      <span>Gerenciamento</span>
+    `;
+  },
+
+
+
+  getFileIcon(fileType) {
+    const icons = {
+      'pdf': 'fas fa-file-pdf',
+      'video': 'fas fa-video',
+      'image': 'fas fa-image',
+      'doc': 'fas fa-file-word',
+      'ppt': 'fas fa-file-powerpoint',
+      'xls': 'fas fa-file-excel',
+      'zip': 'fas fa-file-archive',
+      'default': 'fas fa-file'
+    };
+    return icons[fileType] || icons.default;
+  },
+
+  renderPendingTasks(tasks) {
+    const recentTasks = tasks
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 4);
+
+    UI.pendingCount.textContent = recentTasks.length;
+
+    if (recentTasks.length === 0) {
+      UI.pendingActivities.innerHTML = '<p class="no-tasks">Nenhuma atividade recente</p>';
+      return;
+    }
+
+    UI.pendingActivities.innerHTML = recentTasks.map(task => `
+      <div class="activity-item">
+        <div class="activity-info">
+          <h4>${task.titulo}</h4>
+          <p>${task.alunosAtribuidos?.length || 0} alunos atribuídos</p>
+        </div>
+        <button class="grade-btn" data-task-id="${task._id}">Ver</button>
+      </div>
+    `).join('');
+
+    // Evento para redirecionar ao clicar no botão "Ver"
+    UI.pendingActivities.onclick = function(event) {
+      if (event.target.classList.contains('grade-btn')) {
+        const taskId = event.target.getAttribute('data-task-id');
+        if (taskId) {
+          window.location.href = `atividadeDetalheProf.html?id=${taskId}`;
+        }
+      }
+    };
+  },
+
+  renderStudentsTable(students) {
+    if (students.length === 0) {
+      UI.studentsTableBody.innerHTML = `
+        <tr>
+          <td colspan="6" class="no-students">Nenhum aluno matriculado</td>
+        </tr>
+      `;
+      return;
+    }
+    
+    UI.studentsTableBody.innerHTML = students.map((student, index) => `
+      <tr>
+        <td>
+          <div class="student-cell">
+            <img src="https://i.pravatar.cc/50?img=${index + 10}" alt="Aluno">
+            <span>${student.fullName}</span>
+          </div>
+        </td>
+        <td>${student._id.substring(18, 24)}</td>
+        <td>95%</td>
+        <td>8.5</td>
+        <td>Hoje, 10:30</td>
+        <td>
+          <div class="table-actions">
+            <button><i class="fas fa-eye"></i></button>
+            <button><i class="fas fa-envelope"></i></button>
+            <div class="dropdown">
+              <button class="dropdown-toggle"><i class="fas fa-ellipsis-v"></i></button>
+              <div class="dropdown-menu">
+                <button class="dropdown-item" data-action="view" data-student-id="${student._id}">Ver Perfil</button>
+                <button class="dropdown-item" data-action="message" data-student-id="${student._id}">Enviar Mensagem</button>
+                <button class="dropdown-item text-danger" data-action="delete" data-student-id="${student._id}">Remover Aluno</button>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    // Configurar eventos dos dropdowns
+    document.querySelectorAll('.dropdown-toggle').forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const dropdown = this.nextElementSibling;
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+          if (menu !== dropdown) menu.style.display = 'none';
+        });
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+      });
+    });
+
+    // Fechar dropdowns ao clicar fora
+    document.addEventListener('click', function() {
+      document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.style.display = 'none';
+      });
+    });
+
+    // Configurar ações dos dropdowns
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const action = this.getAttribute('data-action');
+        const studentId = this.getAttribute('data-student-id');
+        
+        if (action === 'delete') {
+          ModalManager.openDeleteStudentModal(studentId);
+        } else if (action === 'view') {
+          console.log('Ver perfil do aluno:', studentId);
+        } else if (action === 'message') {
+          console.log('Enviar mensagem para:', studentId);
+        }
+      });
+    });
+  },
+
+  updatePerformanceStats() {
+    UI.classAverage.textContent = '8.5';
+    UI.deliveryRate.textContent = '92%';
+  }
+};
+
+// =============================================
+// GERENCIAMENTO DE EVENTOS
+// =============================================
+const EventManager = {
+  setupEventListeners() {
+    // Logout
+    if (UI.logoutBtn) {
+      UI.logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        ApiService.redirectToLogin();
+      });
+    }
+    
+    // Nova atividade
+    UI.newActivityBtn.addEventListener('click', () => {
+      window.location.href = `criarAtividade.html?turmaId=${currentClassId}`;
+    });
+    
+    // Novo aviso
+    UI.newAnnouncementBtn.addEventListener('click', () => {
+      ModalManager.openModal(MODAL_TYPES.ANNOUNCEMENT);
+    });
+    
+
+    
+    // Adicionar aluno
+    UI.addStudentBtn.addEventListener('click', () => {
+      ModalManager.openModal(MODAL_TYPES.ADD_STUDENT);
+    });
+    
+    // Configurar modais
+    ModalManager.setupModal(MODAL_TYPES.ANNOUNCEMENT);
+    ModalManager.setupModal(MODAL_TYPES.ADD_STUDENT);
+    ModalManager.setupModal(MODAL_TYPES.DELETE_STUDENT);
+    ModalManager.setupAddStudentModal();
+    ModalManager.setupDeleteStudentModal();
+    
+    // Configurar envio do formulário de aviso
+    UI.modals[MODAL_TYPES.ANNOUNCEMENT].form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('announcement-title').value;
+      const content = document.getElementById('announcement-content').value;
+      
+      try {
+        await ApiService.fetchAuth(`/avisos/turmas/${currentClassId}/avisos`, {
+          method: 'POST',
+          body: JSON.stringify({
+            titulo: title,
+            conteudo: content,
+            turmaId: currentClassId
+          })
+        });
+        
+        ModalManager.closeModal(MODAL_TYPES.ANNOUNCEMENT);
+        UI.modals[MODAL_TYPES.ANNOUNCEMENT].form.reset();
+        alert('Aviso criado com sucesso!');
+      } catch (error) {
+        ApiService.showError('Erro ao criar aviso: ' + error.message);
+      }
+    });
+  }
+};
+
+// =============================================
+// INICIALIZAÇÃO DA APLICAÇÃO
+// =============================================
+const App = {
+  async init() {
+    try {
+      // 1. Configurar listeners
+      EventManager.setupEventListeners();
+      
+      // 2. Carregar dados do professor
+      currentUser = await ApiService.loadTeacherData();
+      Renderer.updateTeacherHeader(currentUser);
+      
+      // 3. Obter ID da turma
+      const urlParams = new URLSearchParams(window.location.search);
+      currentClassId = urlParams.get('id') || (currentUser.salas?.[0]?._id);
+      
+      if (!currentClassId) throw new Error('Nenhuma turma encontrada');
+      
+      // 4. Carregar dados da turma
+      currentClass = await ApiService.loadClassData(currentClassId);
+      Renderer.updateClassData(currentClass);
+      
+      // 5. Carregar e renderizar dados
+      const [students, tasks] = await Promise.all([
+        ApiService.loadClassStudents(currentClassId),
+        ApiService.loadClassTasks(currentClassId, 'ativa')
+      ]);
+      
+      Renderer.renderStudentsTable(students);
+      Renderer.renderPendingTasks(tasks);
+      
+      
+    } catch (error) {
+      console.error('Erro ao inicializar página:', error);
+      ApiService.showError('Erro ao carregar dados. Por favor, tente novamente.');
+    }
+  }
+};
+
+// Iniciar a aplicação quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', () => App.init());
+</script>
+  </body>
+</html>

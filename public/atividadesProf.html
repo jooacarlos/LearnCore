@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>LeanCore - Gerenciar Atividades</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width" />
+  <link rel="stylesheet" href="./css/atividadesProf.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">LeanCore</div>
+    <nav>
+            <ul class="sidebar-nav">
+        <li><a href="./dashBoardProf.html" ><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="./turmasProf.html"><i class="fas fa-users"></i> Turmas</a></li>
+        <li><a href="./atividadesProf.html"class="active"><i class="fas fa-tasks"></i> Atividades</a></li>
+                <li><a href="./dadosProf.html"><i class="fas fa-cog"></i> Configurações</a></li>
+        <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Header -->
+  <header class="header">
+    <h1>Gerenciar Atividades</h1>
+    <div class="header-right">
+      <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Pesquisar atividades..." id="searchInput">
+      </div>
+      <div class="notifications">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge" id="notificationCount">0</span>
+      </div>
+      <div class="user-profile">
+        <img src="https://i.pravatar.cc/32" alt="Foto do perfil" class="avatar">
+        <span id="professorName">Carregando...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Atividades</h1>
+      <div class="header-actions">
+        <button class="btn btn-primary" onclick="window.location.href='criarAtividade.html'">
+          <i class="fas fa-plus"></i> Nova Atividade
+        </button>
+      </div>
+    </div>
+
+    <div class="activities-grid" id="activitiesContainer">
+      <!-- Loading spinner -->
+      <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Carregando atividades...</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/login.html';
+        return;
+      }
+
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      };
+
+      try {
+        // Carrega dados do usuário e tarefas diretamente
+        const [userRes, tarefasRes] = await Promise.all([
+          fetch('http://localhost:3000/api/users/me', { headers }),
+          fetch('http://localhost:3000/api/tarefas', { headers })
+        ]);
+
+        if (!userRes.ok || !tarefasRes.ok) {
+          throw new Error('Erro ao carregar dados');
+        }
+
+        const [userData, tarefasData] = await Promise.all([
+          userRes.json(),
+          tarefasRes.json()
+        ]);
+
+        // Atualiza cabeçalho com nome do professor
+        document.getElementById('professorName').textContent = 
+          `Prof. ${userData.data.firstName} ${userData.data.lastName}`;
+          // Atualiza avatar do professor
+const avatarImg = document.querySelector('.user-profile img');
+if (userData.data.avatar && avatarImg) {
+  const avatarPath = userData.data.avatar.replace(/\\/g, '/');
+  avatarImg.src = avatarPath.startsWith('http')
+    ? avatarPath
+    : `http://localhost:3000/${avatarPath}`;
+}
+
+
+        // Processa as tarefas com os novos status
+        const atividades = tarefasData.data.map(tarefa => ({
+          ...tarefa,
+          // Calcula progresso baseado no novo modelo
+          entregasCount: tarefa.entregas?.length || 0,
+          corrigidasCount: tarefa.entregas?.filter(e => e.status === 'corrigida').length || 0,
+          totalAlunos: tarefa.alunosAtribuidos?.length || 0
+        }));
+
+        // Renderiza as atividades
+        renderAtividades(atividades);
+        
+        // Configura busca
+        setupSearch(atividades);
+
+      } catch (error) {
+        console.error('Erro:', error);
+        showError('Erro ao carregar atividades');
+        document.getElementById('activitiesContainer').innerHTML = 
+          '<div class="error-message">Não foi possível carregar as atividades. Tente recarregar a página.</div>';
+      }
+    });
+
+    function renderAtividades(atividades) {
+      const container = document.getElementById('activitiesContainer');
+      
+      if (!atividades || atividades.length === 0) {
+        container.innerHTML = `
+          <div class="no-activities">
+            <i class="fas fa-tasks"></i>
+            <p>Nenhuma atividade encontrada</p>
+            <button class="btn btn-primary" onclick="window.location.href='criarAtividade.html'">
+              <i class="fas fa-plus"></i> Criar Primeira Atividade
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = atividades.map(atividade => `
+        <div class="activity-card" data-activity-id="${atividade._id}">
+          <div class="activity-icon">
+            <i class="${getIconByDisciplina(atividade.disciplina)}"></i>
+          </div>
+          <div class="progress-badge">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${getProgressPercentage(atividade)}%"></div>
+            </div>
+            <span>${atividade.entregasCount}/${atividade.totalAlunos}</span>
+          </div>
+          <div class="status-badge ${getStatusClass(atividade)}">
+            ${getStatusText(atividade)}
+          </div>
+          <h3>${atividade.titulo}</h3>
+          <p><i class="fas fa-users"></i> Turma: ${getTurmasNames(atividade.turmas)}</p>
+          <p><i class="far fa-calendar"></i> Prazo: ${formatarData(atividade.dataEntrega)}</p>
+          <p><i class="fas fa-check-circle"></i> Corrigidas: ${atividade.corrigidasCount}/${atividade.entregasCount}</p>
+          <div class="card-actions">
+            <button class="btn btn-text" onclick="editAtividade('${atividade._id}'); event.stopPropagation();">
+              <i class="fas fa-edit"></i> Editar
+            </button>
+            <button class="btn btn-text" onclick="viewSubmissions('${atividade._id}'); event.stopPropagation();">
+              <i class="fas fa-eye"></i> Ver Entregas
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      // Adiciona card de nova atividade no final
+      container.innerHTML += `
+        <div class="activity-card new-activity" onclick="window.location.href='criarAtividade.html'">
+          <div class="activity-icon"><i class="fas fa-plus"></i></div>
+          <h3>Criar Nova Atividade</h3>
+          <p>Clique para adicionar uma nova atividade para suas turmas</p>
+          <button class="btn btn-outline">
+            <i class="fas fa-plus"></i> Criar Atividade
+          </button>
+        </div>
+      `;
+
+      // Adiciona evento de clique aos cards (exceto o de nova atividade)
+      document.querySelectorAll('.activity-card:not(.new-activity)').forEach(card => {
+        card.addEventListener('click', () => {
+          const id = card.getAttribute('data-activity-id');
+          if (id) {
+            window.location.href = `atividadeDetalheProf.html?id=${id}`;
+          }
+        });
+      });
+    }
+
+    // Funções auxiliares atualizadas
+    function getTurmasNames(turmas) {
+      if (!turmas || turmas.length === 0) return 'Sem turma';
+      if (turmas.length === 1) return turmas[0].nome || 'Turma sem nome';
+      return `${turmas.length} turmas`;
+    }
+
+    function getProgressPercentage(atividade) {
+      if (!atividade.totalAlunos || atividade.totalAlunos === 0) return 0;
+      return Math.round((atividade.entregasCount / atividade.totalAlunos) * 100);
+    }
+
+    function getStatusClass(atividade) {
+      const hoje = new Date();
+      const dataEntrega = new Date(atividade.dataEntrega);
+      
+      if (['totalmente_corrigida', 'corrigida'].includes(atividade.statusGeral)) {
+        return 'completed';
+      }
+      if (['totalmente_entregue', 'entregue'].includes(atividade.statusGeral)) {
+        return 'delivered';
+      }
+      if (dataEntrega < hoje && ['ativa', 'parcialmente_entregue'].includes(atividade.statusGeral)) {
+        return 'late';
+      }
+      return 'pending';
+    }
+
+    function getStatusText(atividade) {
+      const statusMap = {
+        'ativa': 'Ativa',
+        'parcialmente_entregue': 'Parcialmente Entregue',
+        'totalmente_entregue': 'Totalmente Entregue',
+        'parcialmente_corrigida': 'Parcialmente Corrigida',
+        'totalmente_corrigida': 'Totalmente Corrigida',
+        'arquivada': 'Arquivada'
+      };
+      
+      return statusMap[atividade.statusGeral] || 'Ativa';
+    }
+
+    function formatarData(dataString) {
+      if (!dataString) return 'Sem prazo';
+      const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+      return new Date(dataString).toLocaleDateString('pt-BR', options);
+    }
+
+    // Restante do código permanece igual...
+    function setupSearch(atividades) {
+      const searchInput = document.getElementById('searchInput');
+      searchInput.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        const filtered = atividades.filter(atividade => 
+          atividade.titulo.toLowerCase().includes(term) ||
+          (atividade.turmas && atividade.turmas.some(t => t.nome.toLowerCase().includes(term)))
+        );
+        renderAtividades(filtered);
+      });
+    }
+
+    function getIconByDisciplina(disciplina) {
+      const icons = {
+        matemática: 'fas fa-square-root-alt',
+        português: 'fas fa-book',
+        história: 'fas fa-landmark',
+        geografia: 'fas fa-globe-americas',
+        ciências: 'fas fa-flask',
+        física: 'fas fa-atom',
+        química: 'fas fa-vial',
+        biologia: 'fas fa-dna',
+        inglês: 'fas fa-language',
+        arte: 'fas fa-palette'
+      };
+      
+      const key = disciplina?.toLowerCase() || '';
+      return icons[key] || 'fas fa-tasks';
+    }
+
+    function showError(message) {
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'error-message';
+      errorDiv.innerHTML = `
+        <i class="fas fa-exclamation-circle"></i>
+        <span>${message}</span>
+      `;
+      document.querySelector('main').prepend(errorDiv);
+      setTimeout(() => errorDiv.remove(), 5000);
+    }
+
+    function editAtividade(id) {
+      window.location.href = `editarAtividade.html?id=${id}`;
+    }
+
+    function viewSubmissions(id) {
+      window.location.href = `atividadeEentregas.html?id=${id}`;
+    }
+
+    // Logout
+    document.getElementById('logout').addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.removeItem('token');
+      window.location.href = '/login.html';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Professor</title>
+  <link rel="stylesheet" href="./css/loginProfessor.css">
+  
+</head>
+<body>
+  <!-- Botão para voltar à página anterior -->
+  <a href="alunoProfLogin.html">
+    <button class="back-button">←</button>
+  </a>
+
+  <div class="login-container">
+    <h1>Login Professor</h1>
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="Email Educacional" required>
+      <input type="password" id="password" placeholder="Senha" required>
+      <button type="submit">Entrar no LearnCore</button>
+    </form>
+    <div class="forgot-password">
+      <a href="#">Esqueceu sua senha?</a>
+    </div>
+  </div>
+<script>
+  document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    if (email && password) {
+      try {
+        const response = await fetch('http://localhost:3000/api/users/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const res = await response.json();
+
+        if (response.ok && res.success) {
+          const token = res.data.token;
+          const role = res.data.user.role;
+
+          if (role !== 'professor') {
+            alert('Apenas professores podem acessar este painel.');
+            return;
+          }
+
+          localStorage.setItem('token', token);
+          localStorage.setItem('user', JSON.stringify(res.data.user));
+
+          window.location.href = 'dashBoardProf.html';
+        } else {
+          alert(res.message || 'Erro ao fazer login.');
+        }
+      } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao conectar ao servidor.');
+      }
+    } else {
+      alert('Por favor, preencha todos os campos.');
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <title>Entrega de Atividade</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="./css/atividadeDetalhe.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-pendente {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .status-entregue {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .status-pendente_correcao {
+            background-color: #bfdbfe;
+            color: #1e40af;
+        }
+        .status-corrigida {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .status-devolvida {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        .status-atrasada {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        .upload-area {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-area.dragover {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        .file-preview {
+            margin-top: 10px;
+            padding: 8px;
+            background: #f3f4f6;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .btn {
+            background-color: #3b82f6;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #2563eb;
+        }
+        .btn:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        /* Estilos para imagem e anexos */
+        .activity-image-container {
+            width: 100%;
+            max-height: 400px;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .activity-image {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .activity-image:hover {
+            transform: scale(1.02);
+        }
+        
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .attachment-item:hover {
+            background-color: #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .attachment-icon {
+            font-size: 20px;
+            margin-right: 10px;
+            min-width: 24px;
+            text-align: center;
+        }
+        
+        .attachment-info {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        
+        .attachment-name {
+            font-weight: 500;
+            color: #212529;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .attachment-size {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .attachment-download {
+            color: #3b82f6;
+            padding: 5px;
+            border-radius: 4px;
+            margin-left: 10px;
+            transition: all 0.2s;
+        }
+        
+        .attachment-download:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            transform: scale(1.1);
+        }
+        
+        .no-attachments {
+            color: #6c757d;
+            font-style: italic;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .loading-attachments {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            color: #4b5563;
+        }
+        
+        .image-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            padding: 20px;
+        }
+        
+        .image-placeholder i {
+            font-size: 48px;
+            margin-bottom: 10px;
+            color: #d1d5db;
+        }
+        /* Adicione isso ao seu arquivo CSS ou na tag style */
+.activity-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.upload-area {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn {
+  background-color: #3b82f6;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn:hover {
+  background-color: #2563eb;
+}
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">LeanCore</div>
+        <nav>
+            <ul class="sidebar-nav">
+                <li><a href="dashBoardAlu.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="./turmasAlun.html"><i class="fas fa-users"></i> Turmas</a></li>
+                <li><a href="./atividades.html" class="active"><i class="fas fa-tasks"></i> Atividades</a></li>
+                <li><a href="feedback.html"><i class="fas fa-check-circle"></i> Correções</a></li>
+                
+                <li><a href="./dadosAluno.html"><i class="fas fa-cog"></i> Configurações</a></li>
+               
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Header -->
+    <header class="header">
+        <h1>Detalhes da Atividade</h1>
+        <div class="header-right">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Pesquisar..." />
+            </div>
+            <div class="notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">2</span>
+            </div>
+            <div class="user-profile">
+                <img src="https://i.pravatar.cc/32" alt="Foto do perfil" class="avatar" id="userAvatar" />
+                <span id="alunoName">Carregando...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Substitua esta parte do main-content -->
+<main class="main-content">
+  <div class="activity-card">
+    <div class="flex justify-between items-center mb-6">
+      <h1 id="titulo-atividade" class="text-2xl font-bold">Carregando...</h1>
+      <span id="status-atividade" class="status-badge">Carregando...</span>
+      <span id="data-entrega" class="text-red-500">
+        <i class="fas fa-clock mr-2"></i> Carregando...
+      </span>
+    </div>
+
+    <div class="grid grid-cols-2 gap-8"> <!-- Alterado para grid-cols-2 -->
+      <div>
+        <!-- Container da imagem da atividade -->
+        <div id="imagem-container" class="w-full rounded-lg mb-4"> <!-- Removidas classes extras -->
+          <div class="loading-attachments">
+            <i class="fas fa-spinner fa-spin mr-2"></i> Carregando imagem...
+          </div>
+        </div>
+
+        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+          <h3 class="font-semibold mb-2">Informações da Atividade</h3>
+          <p><strong>Professor:</strong> <span id="professor">Carregando...</span></p>
+          <p><strong>Turma:</strong> <span id="turma">Carregando...</span></p>
+          <p><strong>Pontuação:</strong> <span id="pontos">Carregando...</span> pontos</p>
+          <p><strong>Prazo:</strong> <span id="prazo-completo">Carregando...</span></p>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="font-semibold mb-3">Descrição</h3>
+        <div id="descricao" class="text-gray-700 mb-6 whitespace-pre-line">Carregando...</div>
+
+        <!-- Feedback da entrega do aluno -->
+        <div id="entrega-container">
+          <h3 class="font-semibold mb-3">Sua Entrega</h3>
+          <div id="entrega-aluno" class="bg-gray-50 p-4 rounded-lg mb-4">
+            <div class="loading-attachments">
+              <i class="fas fa-spinner fa-spin mr-2"></i> Carregando informações da entrega...
+            </div>
+          </div>
+        </div>
+
+        <div id="feedback-container" style="display: none;">
+          <h3 class="font-semibold mb-3">Feedback do Professor</h3>
+          <div id="feedback-aluno" class="bg-green-50 p-4 rounded-lg mb-4">
+            <p>Nenhum feedback disponível ainda.</p>
+          </div>
+        </div>
+<br>
+        <h3 class="font-semibold mb-3">Material de Apoio</h3>
+        <div id="anexos" class="bg-gray-50 p-4 rounded-lg mb-4"> <!-- Adicionado bg-gray-50 -->
+          <div class="loading-attachments">
+            <i class="fas fa-spinner fa-spin mr-2"></i> Carregando materiais...
+          </div>
+        </div>
+
+        <!-- Seção de entrega -->
+        <div id="entrega-section">
+          <h3 class="font-semibold mb-3">Envio da Atividade</h3>
+          <div class="upload-area" id="uploadArea">
+            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+            <p>Arraste seu arquivo aqui ou</p>
+            <button class="btn mt-3" id="btnEscolherArquivo">Escolher Arquivo</button>
+            <input type="file" id="fileInput" style="display: none;" />
+          </div>
+          <div id="filePreview" class="mt-2" style="display: none;"></div>
+
+          <div class="mt-4">
+            <label class="block mb-2">Adicionar Comentário (opcional):</label>
+            <textarea id="respostaTexto" class="w-full p-2 border rounded" rows="4" 
+                      placeholder="Digite seu comentário aqui ou cole um link..."></textarea>
+          </div>
+
+          <button id="btnEnviarAtividade" class="btn w-full mt-6">Enviar Atividade</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                window.location.href = "/login.html";
+                return;
+            }
+
+            // Configuração do logout
+         
+
+            // Função para normalizar caminhos de arquivos
+            function normalizePath(path) {
+                if (!path) return '';
+                // Remove o caminho absoluto do servidor se existir
+                return path.replace(/^.*[\\\/]uploads[\\\/]/, '/uploads/').replace(/\\/g, '/');
+            }
+
+            // Função para verificar se um arquivo existe
+            async function checkFileExists(url) {
+                try {
+                    const response = await fetch(url, { method: 'HEAD' });
+                    return response.ok;
+                } catch (error) {
+                    console.error('Erro ao verificar arquivo:', error);
+                    return false;
+                }
+            }
+
+            try {
+                // 1. Carrega dados do usuário
+                const userRes = await fetch("http://localhost:3000/api/users/me", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (!userRes.ok) {
+                    if (userRes.status === 401 || userRes.status === 403) {
+                        localStorage.removeItem("token");
+                        window.location.href = "/login.html";
+                        return;
+                    }
+                    throw new Error("Erro ao carregar dados do usuário");
+                }
+
+                const userData = await userRes.json();
+                const user = userData.data;
+                document.getElementById("alunoName").textContent = `${user.firstName} ${user.lastName}`;
+
+                const avatarEl = document.getElementById("userAvatar");
+                if (user.avatar) {
+                    const avatarPath = normalizePath(user.avatar);
+                    const avatarUrl = avatarPath.startsWith('http') ? avatarPath : `http://localhost:3000${avatarPath}`;
+                    
+                    // Verifica se a imagem existe antes de carregar
+                    if (await checkFileExists(avatarUrl)) {
+                        avatarEl.src = avatarUrl;
+                    } else {
+                        avatarEl.src = "https://i.pravatar.cc/32";
+                    }
+                } else {
+                    avatarEl.src = "https://i.pravatar.cc/32";
+                }
+
+                // 2. Carrega detalhes da atividade
+                const params = new URLSearchParams(window.location.search);
+                const atividadeId = params.get("id");
+
+                if (!atividadeId) {
+                    showError("ID da atividade não encontrado na URL.");
+                    return;
+                }
+
+                const res = await fetch(`http://localhost:3000/api/tarefas/${atividadeId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!res.ok) {
+                    throw new Error("Erro ao buscar atividade");
+                }
+
+                const { data: tarefa } = await res.json();
+
+                // 3. Preenche os dados da atividade
+                document.getElementById("titulo-atividade").textContent = tarefa.titulo;
+                document.getElementById("descricao").textContent = tarefa.descricao || "Sem descrição";
+                document.getElementById("professor").textContent = tarefa.professor?.fullName || "Desconhecido";
+                document.getElementById("turma").textContent = tarefa.turmas?.[0]?.nome || "Turma não informada";
+                document.getElementById("pontos").textContent = tarefa.valor ?? "0";
+
+                const dataEntrega = new Date(tarefa.dataEntrega);
+                const hoje = new Date();
+                const estaAtrasada = hoje > dataEntrega;
+
+                document.getElementById("data-entrega").innerHTML = `
+                    <i class="fas fa-clock mr-2"></i>
+                    Entrega: ${dataEntrega.toLocaleDateString("pt-BR")}
+                    ${estaAtrasada ? '<span class="text-red-500">(Atrasada)</span>' : ''}
+                `;
+
+                document.getElementById("prazo-completo").textContent = 
+                    `Até ${dataEntrega.toLocaleString("pt-BR", { 
+                        day: '2-digit', 
+                        month: '2-digit', 
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })}`;
+
+                // 4. Exibe a imagem da atividade se existir
+                const imagemContainer = document.getElementById("imagem-container");
+                const imagemElement = document.createElement('img');
+                imagemElement.id = "imagem-atividade";
+                imagemElement.className = "activity-image";
+                
+                if (tarefa.imagem && tarefa.imagem.url) {
+                    const imageUrl = `http://localhost:3000${normalizePath(tarefa.imagem.url)}`;
+                    
+                    // Verifica se a imagem existe antes de carregar
+                    if (await checkFileExists(imageUrl)) {
+                        imagemElement.src = imageUrl;
+                        imagemElement.alt = tarefa.imagem.nome || "Imagem da Atividade";
+                        
+                        // Configura o clique para ampliar a imagem
+                        
+                        
+                        imagemElement.onerror = () => {
+                            imagemContainer.innerHTML = `
+                                <div class="image-placeholder">
+                                    <i class="fas fa-image"></i>
+                                    <p>Erro ao carregar imagem</p>
+                                </div>
+                            `;
+                        };
+                        
+                        imagemContainer.innerHTML = '';
+                        imagemContainer.appendChild(imagemElement);
+                    } else {
+                        imagemContainer.innerHTML = `
+                            <div class="image-placeholder">
+                                <i class="fas fa-image"></i>
+                                <p>Imagem não disponível</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    imagemContainer.innerHTML = `
+                        <div class="image-placeholder">
+                            <i class="fas fa-image"></i>
+                            <p>Esta atividade não possui imagem</p>
+                        </div>
+                    `;
+                }
+
+                // 5. Carrega anexos/materiais de apoio
+                const anexosEl = document.getElementById("anexos");
+                
+                if (tarefa.anexos && tarefa.anexos.length > 0) {
+                    anexosEl.innerHTML = '';
+                    
+                    // Processa cada anexo assincronamente
+                    const anexosPromises = tarefa.anexos.map(async (anexo) => {
+                        const item = document.createElement("div");
+                        item.className = "attachment-item";
+                        
+                        const iconClass = getFileIconClass(anexo.tipo);
+                        const fileUrl = `http://localhost:3000${normalizePath(anexo.url)}`;
+                        const fileExists = await checkFileExists(fileUrl);
+                        
+                        item.innerHTML = `
+                            <div class="attachment-icon">
+                                <i class="${iconClass}"></i>
+                            </div>
+                            <div class="attachment-info">
+                                <div class="attachment-name" title="${anexo.nome}">${anexo.nome}</div>
+                                <div class="attachment-size">${formatFileSize(anexo.tamanho)}</div>
+                            </div>
+                            <a href="${fileExists ? fileUrl : '#'}" 
+                               download="${anexo.nome}" 
+                               class="attachment-download"
+                               onclick="${!fileExists ? 'event.preventDefault(); showError(\'Arquivo não encontrado no servidor\'); return false;' : ''}">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        `;
+                        
+                        return item;
+                    });
+                    
+                    // Aguarda todos os anexos serem processados
+                    const anexosElements = await Promise.all(anexosPromises);
+                    anexosElements.forEach(item => anexosEl.appendChild(item));
+                } else {
+                    anexosEl.innerHTML = '<p class="no-attachments">Esta atividade não possui materiais de apoio</p>';
+                }
+
+                // 6. Verifica se o aluno já entregou a atividade
+                const entregaDoAluno = tarefa.entregas.find(e => String(e.aluno) === String(user._id));
+                const entregaSection = document.getElementById("entrega-section");
+                const entregaContainer = document.getElementById("entrega-container");
+                const feedbackContainer = document.getElementById("feedback-container");
+
+                if (entregaDoAluno) {
+                    // Mostra os detalhes da entrega
+                    const entregaDiv = document.getElementById("entrega-aluno");
+                    
+                    let entregaHtml = `
+                        <p><strong>Status:</strong> <span class="status-badge status-${entregaDoAluno.status}">
+                            ${formatStatus(entregaDoAluno.status)}
+                        </span></p>
+                        <p><strong>Data de entrega:</strong> ${new Date(entregaDoAluno.dataEntrega).toLocaleString("pt-BR")}</p>
+                    `;
+
+                    if (entregaDoAluno.respostaTexto) {
+                        entregaHtml += `
+                            <div class="mt-2">
+                                <p class="font-semibold">Resposta:</p>
+                                <div class="bg-white p-3 rounded border mt-1">${entregaDoAluno.respostaTexto}</div>
+                            </div>
+                        `;
+                    }
+
+                    if (entregaDoAluno.anexos && entregaDoAluno.anexos.length > 0) {
+                        entregaHtml += `<div class="mt-2"><p class="font-semibold">Anexos:</p>`;
+                        
+                        // Processa anexos da entrega
+                        const entregaAnexosPromises = entregaDoAluno.anexos.map(async (anexo) => {
+                            const iconClass = getFileIconClass(anexo.tipo);
+                            const fileUrl = `http://localhost:3000${normalizePath(anexo.url)}`;
+                            const fileExists = await checkFileExists(fileUrl);
+                            
+                            return `
+                                <div class="attachment-item">
+                                    <div class="attachment-icon">
+                                        <i class="${iconClass}"></i>
+                                    </div>
+                                    <div class="attachment-info">
+                                        <div class="attachment-name" title="${anexo.nome}">${anexo.nome}</div>
+                                        <div class="attachment-size">${formatFileSize(anexo.tamanho)}</div>
+                                    </div>
+                                    <a href="${fileExists ? fileUrl : '#'}" 
+                                       download="${anexo.nome}" 
+                                       class="attachment-download"
+                                       onclick="${!fileExists ? 'event.preventDefault(); showError(\'Arquivo não encontrado no servidor\'); return false;' : ''}">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </div>
+                            `;
+                        });
+                        
+                        // Aguarda todos os anexos serem processados
+                        const anexosHtml = await Promise.all(entregaAnexosPromises);
+                        entregaHtml += anexosHtml.join('') + `</div>`;
+                    }
+
+                    entregaDiv.innerHTML = entregaHtml;
+
+                    // Mostra feedback se existir
+                    if (entregaDoAluno.feedback && (entregaDoAluno.feedback.texto || entregaDoAluno.feedback.nota)) {
+                        feedbackContainer.style.display = "block";
+                        const feedbackDiv = document.getElementById("feedback-aluno");
+                        
+                        let feedbackHtml = '';
+                        if (entregaDoAluno.feedback.nota) {
+                            feedbackHtml += `<p><strong>Nota:</strong> ${entregaDoAluno.feedback.nota}/${tarefa.valor}</p>`;
+                        }
+                        if (entregaDoAluno.feedback.texto) {
+                            feedbackHtml += `
+                                <div class="mt-2">
+                                    <p class="font-semibold">Comentários:</p>
+                                    <div class="bg-white p-3 rounded border mt-1">${entregaDoAluno.feedback.texto}</div>
+                                </div>
+                            `;
+                        }
+                        if (entregaDoAluno.feedback.dataCorrecao) {
+                            feedbackHtml += `
+                                <p class="text-sm text-gray-500 mt-2">
+                                    <i class="fas fa-calendar-alt mr-1"></i>
+                                    ${new Date(entregaDoAluno.feedback.dataCorrecao).toLocaleString("pt-BR")}
+                                </p>
+                            `;
+                        }
+
+                        feedbackDiv.innerHTML = feedbackHtml;
+                    }
+
+                    // Esconde a seção de entrega se a tarefa já foi corrigida ou não foi devolvida
+                    if (entregaDoAluno.status === 'corrigida' || entregaDoAluno.status === 'entregue' || entregaDoAluno.status === 'pendente_correcao') {
+                        entregaSection.style.display = "none";
+                        entregaContainer.innerHTML = `
+                            <div class="text-center text-gray-600 mt-4">
+                                <i class="fas fa-check-circle text-green-500 text-2xl mb-2"></i>
+                                <p>Você já enviou essa atividade. Aguardando correção.</p>
+                            </div>
+                        `;
+                    } else if (entregaDoAluno.status === 'devolvida') {
+                        // Mostra mensagem especial para tarefas devolvidas
+                        document.getElementById("btnEnviarAtividade").textContent = "Reenviar Atividade";
+                    }
+                } else {
+                    // Se não entregou ainda, mostra apenas a seção de entrega
+                    entregaContainer.innerHTML = '<h3 class="font-semibold mb-3">Você ainda não enviou esta atividade</h3>';
+                }
+
+                // Atualiza o status geral da atividade
+                const statusDisplay = getStatusDisplay(tarefa, user._id);
+                document.getElementById("status-atividade").className = `status-badge status-${statusDisplay.toLowerCase()}`;
+                document.getElementById("status-atividade").textContent = formatStatus(statusDisplay);
+
+                // 7. Configuração do upload de arquivos
+                const uploadArea = document.getElementById("uploadArea");
+                const fileInput = document.getElementById("fileInput");
+                const btnEscolherArquivo = document.getElementById("btnEscolherArquivo");
+                const filePreview = document.getElementById("filePreview");
+                const btnEnviarAtividade = document.getElementById("btnEnviarAtividade");
+
+                btnEscolherArquivo.addEventListener("click", () => fileInput.click());
+
+                // Drag and drop
+                uploadArea.addEventListener("dragover", (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add("dragover");
+                });
+
+                uploadArea.addEventListener("dragleave", () => {
+                    uploadArea.classList.remove("dragover");
+                });
+
+                uploadArea.addEventListener("drop", (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove("dragover");
+                    if (e.dataTransfer.files.length) {
+                        fileInput.files = e.dataTransfer.files;
+                        updateFilePreview();
+                    }
+                });
+
+                fileInput.addEventListener("change", updateFilePreview);
+
+                function updateFilePreview() {
+                    if (fileInput.files && fileInput.files.length > 0) {
+                        filePreview.style.display = "block";
+                        const file = fileInput.files[0];
+                        const iconClass = getFileIconClass(file.type);
+                        
+                        filePreview.innerHTML = `
+                            <div class="file-preview">
+                                <span>
+                                    <i class="${iconClass} mr-2"></i>
+                                    ${file.name} (${formatFileSize(file.size)})
+                                </span>
+                                <button id="removeFile" class="text-red-500 hover:text-red-700">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `;
+
+                        document.getElementById("removeFile").addEventListener("click", () => {
+                            fileInput.value = "";
+                            filePreview.style.display = "none";
+                        });
+                    } else {
+                        filePreview.style.display = "none";
+                    }
+                }
+
+                // 8. Envio da atividade
+                btnEnviarAtividade.addEventListener("click", async () => {
+                    const respostaTexto = document.getElementById("respostaTexto").value.trim();
+                    const file = fileInput.files[0];
+
+                    if (!file && !respostaTexto) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Atenção',
+                            text: 'Por favor, envie um arquivo ou escreva uma resposta textual.',
+                            confirmButtonColor: '#3b82f6',
+                        });
+                        return;
+                    }
+
+                    // Verifica se o prazo já expirou
+                    if (estaAtrasada && !entregaDoAluno) {
+                        const confirm = await Swal.fire({
+                            icon: 'warning',
+                            title: 'Prazo expirado',
+                            text: 'O prazo para entrega já expirou. Deseja enviar mesmo assim?',
+                            showCancelButton: true,
+                            confirmButtonText: 'Enviar',
+                            cancelButtonText: 'Cancelar',
+                            confirmButtonColor: '#3b82f6',
+                        });
+
+                        if (!confirm.isConfirmed) {
+                            return;
+                        }
+                    }
+
+                    const formData = new FormData();
+                    if (file) formData.append("anexos", file);
+                    if (respostaTexto) formData.append("respostaTexto", respostaTexto);
+
+                    btnEnviarAtividade.disabled = true;
+                    btnEnviarAtividade.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enviando...';
+
+                    try {
+                        const enviarRes = await fetch(`http://localhost:3000/api/tarefas/${atividadeId}/entregar`, {
+                            method: "POST",
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                            body: formData,
+                        });
+
+                        if (!enviarRes.ok) {
+                            const errorData = await enviarRes.json();
+                            throw new Error(errorData.message || "Falha no envio da atividade");
+                        }
+
+                        const result = await enviarRes.json();
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Sucesso!',
+                            text: result.message || 'Atividade enviada com sucesso!',
+                            confirmButtonColor: '#3b82f6',
+                        }).then(() => {
+                            // Atualiza visualmente o botão
+                            btnEnviarAtividade.disabled = true;
+                            btnEnviarAtividade.textContent = "Enviado";
+
+                            // Esconde o formulário de entrega
+                            entregaSection.style.display = "none";
+
+                            // Exibe mensagem no lugar do formulário
+                            entregaContainer.innerHTML = `
+                                <div class="text-center text-gray-600 mt-4">
+                                    <i class="fas fa-check-circle text-green-500 text-2xl mb-2"></i>
+                                    <p>Você já enviou essa atividade. Aguardando correção.</p>
+                                </div>
+                            `;
+                        });
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro',
+                            text: error.message || 'Erro ao enviar atividade',
+                            confirmButtonColor: '#3b82f6',
+                        });
+                        console.error("Erro ao enviar atividade:", error);
+                    } finally {
+                        btnEnviarAtividade.disabled = false;
+                        btnEnviarAtividade.textContent = entregaDoAluno?.status === 'devolvida' 
+                            ? "Reenviar Atividade" 
+                            : "Enviar Atividade";
+                    }
+                });
+
+            } catch (error) {
+                console.error("Erro geral:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: error.message || 'Ocorreu um erro ao carregar a atividade',
+                    confirmButtonColor: '#3b82f6',
+                }).then(() => {
+                    window.location.href = "atividades.html";
+                });
+            }
+        });
+
+        // Funções auxiliares
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function formatStatus(status) {
+            const statusMap = {
+                'pendente': 'Pendente',
+                'entregue': 'Entregue',
+                'pendente_correcao': 'Pendente de Correção',
+                'corrigida': 'Corrigida',
+                'devolvida': 'Devolvida',
+                'atrasada': 'Atrasada'
+            };
+            return statusMap[status] || status;
+        }
+
+        function getStatusDisplay(tarefa, alunoId) {
+            const entregaAluno = tarefa.entregas.find(e => e.aluno.toString() === alunoId.toString());
+
+            if (entregaAluno) {
+                return entregaAluno.status;
+            }
+
+            const hoje = new Date();
+            const dataEntrega = new Date(tarefa.dataEntrega);
+            if (hoje > dataEntrega) {
+                return 'atrasada';
+            }
+
+            return 'pendente';
+        }
+
+        function getFileIconClass(fileType) {
+            if (!fileType) return 'fas fa-file text-gray-500';
+            
+            fileType = fileType.toLowerCase();
+            
+            if (fileType.startsWith('image/')) return 'fas fa-file-image text-blue-400';
+            if (fileType.includes('pdf')) return 'fas fa-file-pdf text-red-500';
+            if (fileType.includes('word') || fileType.includes('document')) return 'fas fa-file-word text-blue-600';
+            if (fileType.includes('excel') || fileType.includes('spreadsheet')) return 'fas fa-file-excel text-green-600';
+            if (fileType.includes('powerpoint') || fileType.includes('presentation')) return 'fas fa-file-powerpoint text-orange-500';
+            if (fileType.includes('zip') || fileType.includes('compressed') || fileType.includes('rar') || fileType.includes('7z')) 
+                return 'fas fa-file-archive text-purple-500';
+            if (fileType.includes('text/plain') || fileType.includes('text/')) return 'fas fa-file-alt text-gray-500';
+            if (fileType.includes('audio/')) return 'fas fa-file-audio text-purple-400';
+            if (fileType.includes('video/')) return 'fas fa-file-video text-red-400';
+            if (fileType.includes('csv')) return 'fas fa-file-csv text-green-500';
+            
+            return 'fas fa-file text-gray-500';
+        }
+
+        function showError(message) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro',
+                text: message,
+                confirmButtonColor: '#3b82f6',
+            });
+        }
+    </script>
+</body>
+</html>

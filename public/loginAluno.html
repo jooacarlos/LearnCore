@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Aluno</title>
+  <link rel="stylesheet" href="./css/loginAluno.css">
+  <style>
+    /* Estilos para feedback visual */
+    .loading {
+      display: none;
+      margin: 10px auto;
+      border: 3px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 3px solid #3498db;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .error-message {
+      color: #e74c3c;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Botão para voltar à página anterior -->
+  <a href="alunoProfLogin.html">
+    <button class="back-button">←</button>
+  </a>
+
+  <div class="login-container">
+    <h1>Login Aluno</h1>
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="Email Educacional" required>
+      <input type="password" id="password" placeholder="Senha" required>
+      <button type="submit" id="loginButton">Entrar no LearnCore</button>
+      <div class="loading" id="loadingSpinner"></div>
+      <div class="error-message" id="errorMessage"></div>
+    </form>
+    <div class="forgot-password">
+      <a href="#">Esqueceu sua senha?</a>
+    </div>
+  </div>
+
+ <script>
+  document.getElementById('loginForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const loginButton = document.getElementById('loginButton');
+  const loadingSpinner = document.getElementById('loadingSpinner');
+  const errorMessage = document.getElementById('errorMessage');
+
+  // Validação básica
+  if (!email || !password) {
+    showError('Por favor, preencha todos os campos.');
+    return;
+  }
+
+  // Mostra loading e desabilita botão
+  loginButton.disabled = true;
+  loadingSpinner.style.display = 'block';
+  errorMessage.style.display = 'none';
+
+  try {
+    const response = await fetch('http://localhost:3000/api/users/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      const token = data.data.token;
+      const user = data.data.user;
+
+      if (!token) {
+        throw new Error('Token não recebido do servidor');
+      }
+
+      // Impede login de professores
+      if (user.role === 'professor') {
+        showError('Professores não têm acesso por esta página.');
+        loginButton.disabled = false;
+        loadingSpinner.style.display = 'none';
+        return;
+      }
+
+      // Armazena token e usuário
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      // Verifica se há um código de sala salvo
+      const codigo = localStorage.getItem('codigoParaEntrar');
+      if (codigo) {
+        localStorage.removeItem('codigoParaEntrar');
+        window.location.replace(`entrarSala.html?codigo=${codigo}`);
+      } else {
+        window.location.replace('dashboardAlu.html');
+      }
+    } else {
+      const errorMsg = data.message || 'Erro ao fazer login. Verifique suas credenciais.';
+      showError(errorMsg);
+    }
+  } catch (error) {
+    console.error('Erro no login:', error);
+    showError('Erro ao conectar ao servidor. Tente novamente.');
+  } finally {
+    loginButton.disabled = false;
+    loadingSpinner.style.display = 'none';
+  }
+});
+
+function showError(message) {
+  const errorElement = document.getElementById('errorMessage');
+  errorElement.textContent = message;
+  errorElement.style.display = 'block';
+}
+
+// Preenche email e salva código da sala, se existirem na URL
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const email = params.get('email');
+  const codigo = params.get('codigo');
+
+  if (email) {
+    document.getElementById('email').value = email;
+  }
+
+  if (codigo) {
+    localStorage.setItem('codigoParaEntrar', codigo);
+  }
+});
+
+</script>
+
+</body>
+</html>

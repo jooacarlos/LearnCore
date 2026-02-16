@@ -1,0 +1,82 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: url('Captura\ de\ Tela\ \(4\).png') no-repeat center center / cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .container {
+    text-align: center;
+    background-color: #001f3f;
+    padding: 60px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 400px;
+  }
+
+  h1 {
+    font-size: 24px;
+    color: #fff;
+  }
+
+  p {
+    margin: 10px 0;
+    color: #fff;
+  }
+
+  .section {
+    margin: 20px 0;
+    color: #fff;
+  }
+
+  .button {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .button.blue {
+    background-color: #007bff;
+  }
+
+  .button.green {
+    background-color: #28a745;
+  }
+
+  .button:hover {
+    opacity: 0.9;
+  }
+  .back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: rgba(0, 123, 255, 0.8);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: background-color 0.3s;
+  }
+
+  .link a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  .link a:hover {
+    text-decoration: underline;
+  }

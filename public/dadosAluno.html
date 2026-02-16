@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Configurações - Aluno</title>
+    <link rel="stylesheet" href="./css/config.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+<script type="module">
+document.addEventListener('DOMContentLoaded', async () => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = '/public/loginAluno.html';
+    return;
+  }
+
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
+
+  try {
+    const res = await fetch('http://localhost:3000/api/users/me', { headers });
+
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403) {
+        localStorage.removeItem('token');
+        window.location.href = '/public/loginAluno.html';
+        return;
+      }
+      throw new Error('Erro ao carregar dados do aluno');
+    }
+
+    const userData = await res.json();
+
+    // Verifica se é aluno
+    if (userData.data.role !== 'aluno') {
+      localStorage.removeItem('token');
+      window.location.href = '/public/loginProfessor.html';
+      return;
+    }
+
+    const user = userData.data;
+
+    // Atualiza nome
+document.getElementById('alunoNameHeader').textContent = user.fullName;
+document.getElementById('alunoNameProfile').textContent = user.fullName;
+
+
+    // Atualiza avatar
+    const avatarImgs = document.querySelectorAll('.avatar-img');
+    avatarImgs.forEach((img) => {
+      const avatarPath = user.avatar;
+      img.src = avatarPath.startsWith('http')
+        ? avatarPath
+        : `http://localhost:3000/uploads/avatars/${avatarPath}`;
+    });
+
+    // Atualiza email e matrícula
+    document.getElementById("emailAluno").textContent = user.email;
+    document.getElementById("matriculaAluno").textContent = user.matricula || "Não informada";
+
+  } catch (error) {
+    console.error('Erro ao carregar dados:', error);
+  }
+});
+</script>
+
+
+    <style>
+      :root {
+        --primary-color: #2563eb;
+        --sidebar-width: 250px;
+        --header-height: 60px;
+        --background-color: #f3f4f6;
+        --text-color: #374151;
+      }
+
+       /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--sidebar-width);
+      height: 100vh;
+      background-color: white;
+      box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+      padding: 2rem 0;
+    }
+
+    .sidebar .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      padding: 0 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .sidebar-nav li a {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 2rem;
+      color: #4b5563;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav li a i {
+      margin-right: 0.75rem;
+      width: 20px;
+      
+    }
+
+    .sidebar-nav li a:hover {
+      background-color: var(--background-color);
+      color: var(--primary-color);
+    }
+
+    .sidebar-nav li a.active {
+      background-color: #eff6ff;
+      color: var(--primary-color);
+    
+    }
+      .main-content {
+        margin-left: var(--sidebar-width);
+        padding: 1rem 2rem;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .profile-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .profile-image {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+      }
+
+      .large-profile-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .settings-container {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .info-grid {
+        display: flex;
+        gap: 2rem;
+        margin-top: 1.5rem;
+      }
+
+      .info-card {
+        flex: 1;
+        background-color: var(--background-color);
+        padding: 1rem;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .info-card i {
+        font-size: 1.5rem;  
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+<aside class="sidebar">
+    <div class="logo">LeanCore</div>
+    <nav>
+      <ul class="sidebar-nav">
+        <li><a href="./dashBoardAlu.html" ><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="./turmasAlun.html"><i class="fas fa-users"></i> Turmas</a></li>
+        <li><a href="./atividades.html"><i class="fas fa-tasks"></i> Atividades</a></li>
+        <li><a href="./feedback.html"><i class="fas fa-check-circle"></i> Correções</a></li>
+        <li><a href="./dadosAluno.html" class="active"><i class="fas fa-cog"></i> Configurações</a></li>
+       
+      </ul>
+    </nav>
+  </aside>
+
+    <main class="main-content">
+      <div class="header">
+        <h1>Configurações</h1>
+        <div class="profile-section">
+          <img src="https://i.pravatar.cc/40" alt="Foto do perfil" class="profile-image avatar-img" />
+          <span id="alunoNameHeader">Carregando...</span>
+        </div>
+      </div>
+
+      <div class="settings-container">
+        <h2>Perfil do Aluno</h2>
+        <div class="profile-header">
+          <div class="profile-photo-container">
+            <img src="https://i.pravatar.cc/120" alt="Foto do perfil" class="large-profile-image avatar-img" />
+          </div>
+          <div class="profile-details">
+           <h3 id="alunoNameProfile">Carregando...</h3>
+            <p>Aluno(a) da plataforma</p>
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <i class="fas fa-envelope"></i>
+            <h4>Email</h4>
+            <p id="emailAluno">Carregando...</p>
+          </div>
+          <div class="info-card">
+            <i class="fas fa-id-card"></i>
+            <h4>Matrícula</h4>
+            <p id="matriculaAluno">Carregando...</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    
+  </body>
+</html>

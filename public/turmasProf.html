@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <title>LeanCore - Turmas do Professor</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="./css/turmasProf.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Variáveis de Cores e Dimensões */
+    :root {
+      --primary-color: #2563eb;
+      --sidebar-width: 250px;
+      --header-height: 70px;
+      --background-color: #f3f4f6;
+      --text-color: #1f2937;
+    }
+
+    /* Layout Principal */
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      color: var(--text-color);
+      background-color: var(--background-color);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      position: fixed;
+      top: 0;
+      left: var(--sidebar-width);
+      right: 0;
+      height: var(--header-height);
+      background-color: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      z-index: 100;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background-color: var(--background-color);
+      border-radius: 9999px;
+      padding: 0.5rem 1rem;
+      width: 300px;
+    }
+
+    .search-bar i {
+      color: #6b7280;
+      margin-right: 0.5rem;
+    }
+
+    .search-bar input {
+      border: none;
+      background: none;
+      outline: none;
+      width: 100%;
+      font-size: 0.875rem;
+    }
+
+    .notifications {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .notifications i {
+      font-size: 1.25rem;
+      color: #6b7280;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background-color: #ef4444;
+      color: white;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--sidebar-width);
+      height: 100vh;
+      background-color: white;
+      box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+      padding: 2rem 0;
+    }
+
+    .sidebar .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      padding: 0 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+    }
+
+    .sidebar-nav li a {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 2rem;
+      color: #4b5563;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav li a i {
+      margin-right: 0.75rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    .sidebar-nav li a:hover {
+      background-color: var(--background-color);
+      color: var(--primary-color);
+    }
+
+    .sidebar-nav li a.active {
+      background-color: #eff6ff;
+      color: var(--primary-color);
+      border-right: 3px solid var(--primary-color);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      margin-top: var(--header-height);
+      padding: 2rem;
+    }
+
+    /* Estilos de card atualizados */
+    .stats {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      flex: 1;
+      padding: 20px;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .stat-card h3 {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .stat-card p {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4e73df;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .turma-card {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .turma-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .turma-card h3 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .turma-desc {
+      font-size: 14px;
+      color: #777;
+      margin-bottom: 10px;
+    }
+
+    .turma-stats {
+      display: flex;
+      gap: 10px;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .turma-stats i {
+      margin-right: 5px;
+      color: #4e73df;
+    }
+
+    .loading-spinner {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    .loading-spinner i {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .no-classes {
+      text-align: center;
+      padding: 40px;
+      grid-column: 1 / -1;
+    }
+
+    .no-classes i {
+      font-size: 3rem;
+      color: #ccc;
+      margin-bottom: 1rem;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background-color: #1d4ed8;
+    }
+
+    .error-message {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    .error-message i {
+      margin-right: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .header,
+      .main-content {
+        margin-left: 0;
+      }
+
+      .sidebar {
+        display: none;
+      }
+    }
+    .btn-criar-turma {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  cursor: pointer;
+  z-index: 1000;
+  transition: background-color 0.2s ease;
+}
+
+.btn-criar-turma:hover {
+  background-color: #1d4ed8;
+}
+
+.btn-criar-turma i {
+  margin-right: 8px;
+}
+
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar Base -->
+    <aside class="sidebar">
+      <div class="logo">LeanCore</div>
+      <nav>
+        <ul class="sidebar-nav">
+          <ul class="sidebar-nav">
+        <li><a href="./dashBoardProf.html" ><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="./turmasProf.html" class="active"><i class="fas fa-users"></i> Turmas</a></li>
+        <li><a href="./atividadesProf.html"><i class="fas fa-tasks"></i> Atividades</a></li>
+        <li><a href="./dadosProf.html"><i class="fas fa-cog"></i> Configurações</a></li>
+        <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+      </ul>
+      </nav>
+    </aside>
+
+    <!-- Header Base -->
+    <header class="header">
+      <h1>Turmas do Professor</h1>
+      <div class="header-right">
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Pesquisar..." id="searchInput">
+        </div>
+        <div class="notifications">
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge" id="notificationCount">0</span>
+        </div>
+        <div class="user-profile">
+          <img src="https://i.pravatar.cc/32" alt="Foto do perfil" class="avatar">
+          <span id="professorName">Carregando...</span>
+        </div>
+      </div>
+    </header>
+    <!-- Botão Criar Nova Turma -->
+<button class="btn-criar-turma" onclick="createClass()">
+  <i class="fas fa-plus"></i> Nova Turma
+</button>
+
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Classes Grid -->
+      <div class="container" id="turmasContainer">
+        <!-- Será preenchido dinamicamente pelo JavaScript -->
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Carregando turmas...</p>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          window.location.href = '/login.html';
+          return;
+        }
+
+        const headers = {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        };
+
+        try {
+          // Carrega dados do usuário e salas em paralelo
+          const [userRes, salasRes] = await Promise.all([
+            fetch('http://localhost:3000/api/users/me', { headers }),
+            fetch('http://localhost:3000/api/salas', { headers })
+          ]);
+
+          if (!userRes.ok || !salasRes.ok) {
+            throw new Error('Erro ao carregar dados');
+          }
+
+          const [userData, salasData] = await Promise.all([
+            userRes.json(),
+            salasRes.json()
+          ]);
+
+          // Atualiza cabeçalho com nome do professor
+          document.getElementById('professorName').textContent = 
+            `${userData.data.firstName} ${userData.data.lastName}`;
+            // Atualiza avatar do professor
+const avatarImg = document.querySelector('.user-profile img');
+if (userData.data.avatar && avatarImg) {
+  const avatarPath = userData.data.avatar.replace(/\\/g, '/');
+  avatarImg.src = avatarPath.startsWith('http')
+    ? avatarPath
+    : `http://localhost:3000/${avatarPath}`;
+}
+
+
+          // Renderiza as turmas
+          renderTurmas(salasData.data);
+          
+          // Configura busca
+          setupSearch(salasData.data);
+
+        } catch (error) {
+          console.error('Erro:', error);
+          showError('Erro ao carregar turmas');
+          document.getElementById('turmasContainer').innerHTML = 
+            '<div class="error-message"><i class="fas fa-exclamation-circle"></i> Não foi possível carregar as turmas. Tente recarregar a página.</div>';
+        }
+      });
+
+      function renderTurmas(turmas) {
+        const container = document.getElementById('turmasContainer');
+        
+        if (!turmas || turmas.length === 0) {
+          container.innerHTML = `
+            <div class="no-classes">
+              <i class="fas fa-users-slash"></i>
+              <h2>Você não possui turmas ainda</h2>
+              <p>Comece criando sua primeira turma para gerenciar seus alunos e atividades</p>
+              <button class="btn-primary" onclick="createClass()">Criar Primeira Turma</button>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = turmas.map(turma => `
+          <div class="turma-card" onclick="viewClass('${turma._id}')">
+            <h3>${turma.nome}</h3>
+            <p class="turma-desc">${formatarHorario(turma.horario)}</p>
+            <div class="turma-stats">
+              <span><i class="fas fa-user-graduate"></i> ${turma.totalAlunos || 0} alunos</span>
+              <span><i class="fas fa-tasks"></i> ${turma.tarefas?.length || 0} atividades</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function setupSearch(turmas) {
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+          const term = e.target.value.toLowerCase();
+          const filtered = turmas.filter(turma => 
+            turma.nome.toLowerCase().includes(term) ||
+            (turma.descricao && turma.descricao.toLowerCase().includes(term))
+          );
+          renderTurmas(filtered);
+        });
+      }
+
+      function formatarHorario(horario) {
+        if (!horario) return 'Horário não definido';
+        // Adapte conforme a estrutura do seu objeto de horário
+        return horario.dias ? `${horario.dias.join(' e ')} • ${horario.horaInicio} - ${horario.horaFim}` : 'Horário não definido';
+      }
+
+      function showError(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.innerHTML = `
+          <i class="fas fa-exclamation-circle"></i>
+          <span>${message}</span>
+        `;
+        document.querySelector('main').prepend(errorDiv);
+        setTimeout(() => errorDiv.remove(), 5000);
+      }
+
+      function createClass() {
+        window.location.href = 'criarSala.html';
+      }
+
+      function editClass(turmaId) {
+        event.stopPropagation();
+        window.location.href = `./editar-turma.html?id=${turmaId}`;
+      }
+
+      function viewClass(turmaId) {
+        event.stopPropagation();
+        window.location.href = `./turmasDetailsProf.html?id=${turmaId}`;
+      }
+
+      // Logout
+      document.getElementById('logout').addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        window.location.href = '/login.html';
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <title>LeanCore - Entregas da Atividade</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="script.js"></script>
+    <link rel="stylesheet" href="./css/entregas.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  </head>
+  <body>
+    >
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">LeanCore</div>
+      <nav>
+              <ul class="sidebar-nav">
+        <li><a href="./dashBoardProf.html" ><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="./turmasProf.html"><i class="fas fa-users"></i> Turmas</a></li>
+        <li><a href="./atividadesProf.html"class="active"><i class="fas fa-tasks"></i> Atividades</a></li>
+        
+        <li><a href="./dadosProf.html"><i class="fas fa-cog"></i> Configurações</a></li>
+        <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+      </ul>
+      </nav>
+    </aside>
+
+    <!-- Header -->
+    <header class="header">
+      <h1>Painel do Professor</h1>
+      <div class="header-right">
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Pesquisar alunos...">
+        </div>
+        <div class="notifications">
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge">3</span>
+        </div>
+        <div class="user-profile">
+          <img src="https://i.pravatar.cc/32" alt="Foto do perfil" class="avatar">
+          <span>Prof. Maria Santos</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="page-header">
+        <div class="activity-summary">
+          <a href="./index.html" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            Voltar
+          </a>
+          <h1 class="page-title">Matemática - Álgebra Linear</h1>
+          <div class="activity-meta">
+            <span><i class="fas fa-users"></i> 3º Ano A</span>
+            <span><i class="far fa-calendar"></i> Prazo: 20/03/2025</span>
+            <span><i class="fas fa-chart-bar"></i> Média Geral: 8.5</span>
+            <span class="submission-count"><i class="fas fa-check-circle"></i> Entregas: 28/30</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <div class="filters">
+            <select class="filter-select">
+              <option value="todos">Status</option>
+              <option value="corrigido">Corrigido</option>
+              <option value="pendente">Pendente</option>
+              <option value="atrasado">Atrasado</option>
+            </select>
+            <select class="filter-select">
+              <option value="todos">Ordenar por</option>
+              <option value="nome">Nome</option>
+              <option value="data">Data de entrega</option>
+              <option value="nota">Nota</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="submissions-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Aluno</th>
+              <th>Turma</th>
+              <th>Data de Entrega</th>
+              <th>Status</th>
+              <th>Nota</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="student-info">
+                <img src="https://i.pravatar.cc/32?img=1" alt="Foto do aluno" class="student-avatar">
+                <span>Ana Silva</span>
+              </td>
+              <td>3º Ano A</td>
+              <td>15/03/2025 14:30</td>
+              <td><span class="status status-corrected">Corrigido</span></td>
+              <td><span class="grade excellent">9.5</span></td>
+              <td>
+                <button class="btn btn-text"><i class="fas fa-eye"></i> Ver</button>
+                <button class="btn btn-text"><i class="fas fa-edit"></i> Editar</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="student-info">
+                <img src="https://i.pravatar.cc/32?img=2" alt="Foto do aluno" class="student-avatar">
+                <span>Pedro Santos</span>
+              </td>
+              <td>3º Ano A</td>
+              <td>15/03/2025 15:45</td>
+              <td><span class="status status-corrected">Corrigido</span></td>
+              <td><span class="grade good">8.0</span></td>
+              <td>
+                <button class="btn btn-text"><i class="fas fa-eye"></i> Ver</button>
+                <button class="btn btn-text"><i class="fas fa-edit"></i> Editar</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="student-info">
+                <img src="https://i.pravatar.cc/32?img=3" alt="Foto do aluno" class="student-avatar">
+                <span>Maria Oliveira</span>
+              </td>
+              <td>3º Ano A</td>
+              <td>16/03/2025 09:15</td>
+              <td><span class="status status-pending">Pendente</span></td>
+              <td><span class="grade pending">-</span></td>
+              <td>
+                <button class="btn btn-text"><i class="fas fa-eye"></i> Ver</button>
+                <button class="btn btn-text"><i class="fas fa-edit"></i> Corrigir</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="student-info">
+                <img src="https://i.pravatar.cc/32?img=4" alt="Foto do aluno" class="student-avatar">
+                <span>João Costa</span>
+              </td>
+              <td>3º Ano A</td>
+              <td>16/03/2025 10:30</td>
+              <td><span class="status status-late">Atrasado</span></td>
+              <td><span class="grade pending">-</span></td>
+              <td>
+                <button class="btn btn-text"><i class="fas fa-eye"></i> Ver</button>
+                <button class="btn btn-text"><i class="fas fa-edit"></i> Corrigir</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <button class="btn btn-text" disabled><i class="fas fa-chevron-left"></i> Anterior</button>
+        <div class="page-numbers">
+          <button class="btn btn-text active">1</button>
+          <button class="btn btn-text">2</button>
+          <button class="btn btn-text">3</button>
+          <span>...</span>
+          <button class="btn btn-text">10</button>
+        </div>
+        <button class="btn btn-text">Próxima <i class="fas fa-chevron-right"></i></button>
+      </div>
+    </main>
+  </body>
+</html>

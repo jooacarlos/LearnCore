@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <title>LeanCore - Minhas Turmas</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="./css/turmasAlu.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos adicionais para melhorar a visualização */
+        .classes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .class-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .class-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .class-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #4e73df;
+        }
+        
+        .class-card h3 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+        }
+        
+        .class-card p {
+            margin: 0 0 10px 0;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .progress {
+            background: #e9ecef;
+            border-radius: 20px;
+            height: 10px;
+            width: 100%;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: #4e73df;
+            border-radius: 20px;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            margin-top: 5px;
+            font-size: 0.8rem;
+            color: #4e73df;
+            font-weight: 500;
+        }
+        
+        .loading {
+            display: none;
+            margin: 20px auto;
+            border: 5px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 5px solid #3498db;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #fdecea;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .student-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .student-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 20px;
+            border: 3px solid #4e73df;
+        }
+        
+        .student-details h2 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+        }
+        
+        .student-details p {
+            margin: 0;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">LeanCore</div>
+        <nav>
+            <ul class="sidebar-nav">
+                <li><a href="dashBoardAlu.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="./turmasAlun.html" class="active"><i class="fas fa-users"></i> Turmas</a></li>
+                <li><a href="./atividades.html"><i class="fas fa-tasks"></i> Atividades</a></li>
+                <li><a href="feedback.html"><i class="fas fa-check-circle"></i> Correções</a></li>
+               
+                <li><a href="./dadosAluno.html"><i class="fas fa-cog"></i> Configurações</a></li>
+                
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Header -->
+    <header class="header">
+        <h1>Minhas Turmas</h1>
+        <div class="header-right">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Pesquisar..." id="searchInput">
+            </div>
+            <div class="notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationCount">0</span>
+            </div>
+            <div class="user-profile">
+                <img src="https://i.pravatar.cc/32" alt="Foto do perfil" class="avatar">
+                <span id="studentName">Carregando...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header with Student Info -->
+        <div class="student-info">
+            <img src="https://i.pravatar.cc/32" alt="Foto do perfil" class="student-photo" id="studentPhoto">
+            <div class="student-details">
+                <h2 id="studentFullName">Carregando...</h2>
+                <p id="studentClassInfo">Turma: Carregando...</p>
+            </div>
+        </div>
+
+        <!-- Classes Grid -->
+        <section class="classes-section">
+            <h1>Minhas Turmas</h1>
+            
+            <div class="loading" id="loadingSpinner"></div>
+            <div class="error-message" id="errorMessage"></div>
+            
+            <div class="classes-grid" id="classesGrid">
+                <!-- Turmas serão carregadas dinamicamente aqui -->
+            </div>
+        </section>
+    </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user'));
+        
+        if (!token || !user) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // Elementos da UI
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const errorMessage = document.getElementById('errorMessage');
+        const classesGrid = document.getElementById('classesGrid');
+        const studentName = document.getElementById('studentName');
+        const studentFullName = document.getElementById('studentFullName');
+        const studentClassInfo = document.getElementById('studentClassInfo');
+        const notificationCount = document.getElementById('notificationCount');
+
+        // Atualiza informações do aluno no cabeçalho
+// Atualiza nome, matrícula e avatar do aluno
+studentName.textContent = `${user.firstName} ${user.lastName}`;
+studentFullName.textContent = `${user.firstName} ${user.lastName}`;
+studentClassInfo.textContent = `Matrícula: ${user.matricula || 'Não informada'}`;
+
+if (user.avatar) {
+    const avatarPath = user.avatar.replace(/\\/g, '/');
+    const avatarUrl = avatarPath.startsWith('http')
+        ? avatarPath
+        : `http://localhost:3000/${avatarPath}`;
+
+    const avatarElHeader = document.querySelector('.user-profile img');
+    if (avatarElHeader) avatarElHeader.src = avatarUrl;
+
+    const avatarElStudentInfo = document.getElementById('studentPhoto');
+    if (avatarElStudentInfo) avatarElStudentInfo.src = avatarUrl;
+}
+
+
+        try {
+            // Mostra loading
+            loadingSpinner.style.display = 'block';
+            classesGrid.innerHTML = '';
+            errorMessage.style.display = 'none';
+
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            };
+
+            // Carrega turmas do aluno
+            const turmasRes = await fetch('http://localhost:3000/api/salas', { headers });
+            
+            if (!turmasRes.ok) {
+                throw new Error('Erro ao carregar turmas');
+            }
+
+            const turmasData = await turmasRes.json();
+            const turmasDoAluno = turmasData.data.filter(turma => 
+                turma.alunos?.some(aluno => aluno._id === user._id)
+            );
+
+            // Carrega tarefas para calcular progresso e notificações
+            const tarefasRes = await fetch('http://localhost:3000/api/tarefas', { headers });
+            if (!tarefasRes.ok) throw new Error('Erro ao carregar tarefas');
+            
+            const tarefasData = await tarefasRes.json();
+            const tarefasDoAluno = tarefasData.data.filter(tarefa => 
+    tarefa.alunosAtribuidos?.includes(user._id) ||
+    (tarefa.turmas && turmasDoAluno.some(turma => 
+        turma._id === tarefa.turmas[0]?._id))
+);
+
+
+            // Calcula notificações (tarefas pendentes)
+            const tarefasPendentes = tarefasDoAluno.filter(tarefa => 
+                tarefa.status === 'pendente' || tarefa.status === 'ativa'
+            ).length;
+            notificationCount.textContent = tarefasPendentes;
+
+            // Renderiza turmas
+            if (turmasDoAluno.length === 0) {
+                classesGrid.innerHTML = '<p class="no-data">Você não está matriculado em nenhuma turma</p>';
+            } else {
+                classesGrid.innerHTML = turmasDoAluno.map(turma => {
+                    // Calcula progresso (simplificado - você pode implementar lógica mais complexa)
+                    const tarefasDaTurma = tarefasDoAluno.filter(t => 
+                        t.turmas?.some(tId => tId._id === turma._id)
+                    );
+                    const tarefasCompletas = tarefasDaTurma.filter(t => 
+                        t.status === 'corrigida'
+                    ).length;
+                    const progresso = tarefasDaTurma.length > 0 
+                        ? Math.round((tarefasCompletas / tarefasDaTurma.length) * 100)
+                        : 0;
+
+                    // Ícone baseado na matéria (simplificado)
+                    const materia = turma.materias?.[0]?.nome.toLowerCase() || 'book';
+                    const iconMap = {
+                        'matemática': 'calculator',
+                        'ciências': 'flask',
+                        'literatura': 'book',
+                        'geografia': 'globe-americas',
+                        'física': 'atom',
+                        'inglês': 'language',
+                        'história': 'landmark',
+                        'química': 'flask-vial'
+                    };
+                    const icon = iconMap[materia] || 'book';
+
+                    return `
+                        <a href="turmasDetailsAlun.html?id=${turma._id}" class="class-card">
+                            <i class="fas fa-${icon}"></i>
+                            <h3>${turma.nome}</h3>
+                            <p>Prof. ${turma.professor?.firstName || 'Não informado'}</p>
+                         
+                          
+                        </a>
+                    `;
+                }).join('');
+            }
+
+        } catch (error) {
+            console.error('Erro:', error);
+            errorMessage.textContent = 'Erro ao carregar turmas. Tente recarregar a página.';
+            errorMessage.style.display = 'block';
+        } finally {
+            loadingSpinner.style.display = 'none';
+        }
+
+        // Logout
+        document.getElementById('logout').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        });
+    });
+
+    // Função para buscar ícone baseado no nome da matéria
+    function getMateriaIcon(materiaNome) {
+        const map = {
+            'matemática': 'calculator',
+            'ciências': 'flask',
+            'português': 'book-open',
+            'história': 'landmark',
+            'geografia': 'globe-americas',
+            'inglês': 'language',
+            'espanhol': 'language',
+            'física': 'atom',
+            'química': 'flask-vial',
+            'biologia': 'dna',
+            'filosofia': 'brain',
+            'sociologia': 'users',
+            'artes': 'palette',
+            'educação física': 'running'
+        };
+        
+        const nomeLower = materiaNome.toLowerCase();
+        return map[nomeLower] || 'book';
+    }
+    </script>
+</body>
+</html>

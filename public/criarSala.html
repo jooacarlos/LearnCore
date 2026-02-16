@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <title>LeanCore - Criar Turma</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-color: #2563eb;
+        --sidebar-width: 250px;
+        --header-height: 70px;
+        --background-color: #f3f4f6;
+        --text-color: #1f2937;
+      }
+
+      body {
+        font-family: 'Inter', system-ui, sans-serif;
+        color: var(--text-color);
+        background-color: var(--background-color);
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: var(--sidebar-width);
+        height: 100vh;
+        background-color: white;
+        box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+        padding: 2rem 0;
+      }
+
+      .sidebar .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        padding: 0 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .sidebar-nav {
+        list-style: none;
+      }
+
+      .sidebar-nav li a {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 2rem;
+        color: #4b5563;
+        text-decoration: none;
+        transition: all 0.2s;
+      }
+
+      .sidebar-nav li a i {
+        margin-right: 0.75rem;
+        width: 20px;
+        text-align: center;
+      }
+
+      .sidebar-nav li a:hover {
+        background-color: var(--background-color);
+        color: var(--primary-color);
+      }
+
+      .sidebar-nav li a.active {
+        background-color: #eff6ff;
+        color: var(--primary-color);
+        border-right: 3px solid var(--primary-color);
+      }
+
+      /* Header */
+      .header {
+        position: fixed;
+        top: 0;
+        left: var(--sidebar-width);
+        right: 0;
+        height: var(--header-height);
+        background-color: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2rem;
+        z-index: 100;
+      }
+
+      .header h1 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+      }
+
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+      }
+
+      .avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+      }
+
+      /* Main Content */
+      .main-content {
+        margin-left: var(--sidebar-width);
+        margin-top: var(--header-height);
+        padding: 2rem;
+      }
+
+      /* Form Styles */
+      .form-container {
+        display: flex;
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .form-section {
+        flex: 2;
+        background: white;
+        border-radius: 0.5rem;
+        padding: 2rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .preview-section {
+        flex: 1;
+        background: white;
+        border-radius: 0.5rem;
+        padding: 2rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        align-self: flex-start;
+        position: sticky;
+        top: calc(var(--header-height) + 2rem);
+      }
+
+      .form-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #4b5563;
+        margin-bottom: 0.5rem;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        transition: border-color 0.2s;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      .form-textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      .file-upload {
+        border: 2px dashed #d1d5db;
+        border-radius: 0.5rem;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .file-upload:hover {
+        border-color: var(--primary-color);
+        background-color: #f8fafc;
+      }
+
+      .file-upload i {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+
+      .file-upload p {
+        font-size: 0.875rem;
+        color: #4b5563;
+      }
+
+      .file-upload input {
+        display: none;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background-color: #1d4ed8;
+      }
+
+      .btn-secondary {
+        background-color: #f3f4f6;
+        color: #4b5563;
+      }
+
+      .btn-secondary:hover {
+        background-color: #e5e7eb;
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      /* Preview Card */
+      .preview-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #1f2937;
+      }
+
+      .preview-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        font-size: 0.875rem;
+      }
+
+      .preview-item i {
+        width: 20px;
+        color: var(--primary-color);
+        margin-right: 0.5rem;
+      }
+
+      .preview-divider {
+        border-top: 1px solid #e5e7eb;
+        margin: 1rem 0;
+        padding-top: 1rem;
+      }
+
+      .loading-spinner {
+        display: inline-block;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      .error-message {
+        color: #dc2626;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+      }
+
+      .success-message {
+        color: #16a34a;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">LeanCore</div>
+      <nav>
+              <ul class="sidebar-nav">
+        <li><a href="./dashBoardProf.html" ><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="./turmasProf.html"><i class="fas fa-users"></i> Turmas</a></li>
+        <li><a href="./atividadesProf.html"class="active"><i class="fas fa-tasks"></i> Atividades</a></li>
+        
+        <li><a href="./dadosProf.html"><i class="fas fa-cog"></i> Configurações</a></li>
+        <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+      </ul>
+      </nav>
+    </aside>
+
+    <!-- Header -->
+    <header class="header">
+      <h1>Criar Nova Turma</h1>
+      <div class="header-right">
+        <div class="user-profile">
+          <img src="https://i.pravatar.cc/32" alt="Foto do perfil" class="avatar">
+          <span id="professorName">Carregando...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="form-container">
+        <!-- Form Section -->
+        <section class="form-section">
+          <h2 class="form-title">Informações da Turma</h2>
+          <form id="classForm">
+            <div class="form-group">
+              <label class="form-label">Nome da Turma *</label>
+              <input type="text" id="className" class="form-input" placeholder="Ex: Turma de Geografia 2023" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Matéria *</label>
+              <select id="materiaId" class="form-input" required>
+                <option value="">Selecione uma matéria</option>
+                <!-- Será preenchido dinamicamente -->
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Descrição (Opcional)</label>
+              <textarea id="descricao" class="form-input form-textarea" placeholder="Descreva o propósito desta turma"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Adicionar Alunos (Opcional)</label>
+              <div class="file-upload" id="fileUploadArea">
+                <i class="fas fa-user-plus"></i>
+                <p>Arraste ou clique para adicionar arquivo</p>
+                <p>Formato CSV ou Excel</p>
+                <input type="file" id="studentFile" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+              </div>
+              <div id="fileInfo" style="display: none; margin-top: 1rem;">
+                <p><i class="fas fa-file"></i> <span id="fileName"></span> <button type="button" id="removeFile" style="color: #ef4444; margin-left: 0.5rem;">Remover</button></p>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" onclick="window.location.href='turmasProf.html'">Cancelar</button>
+              <button type="submit" class="btn btn-primary" id="submitBtn">
+                <span id="submitText">Criar Turma</span>
+                <span id="submitSpinner" class="loading-spinner" style="display: none;"><i class="fas fa-spinner"></i></span>
+              </button>
+            </div>
+            <div id="formMessage" class="error-message" style="display: none;"></div>
+          </form>
+        </section>
+
+        <!-- Preview Section -->
+        <section class="preview-section">
+          <h3 class="preview-title">Pré-visualização</h3>
+          <div class="preview-item">
+            <i class="fas fa-users"></i>
+            <span id="previewName">Nova Turma</span>
+          </div>
+          <div class="preview-item">
+            <i class="fas fa-book"></i>
+            <span id="previewMateria">Matéria não selecionada</span>
+          </div>
+          <div class="preview-item">
+            <i class="fas fa-info-circle"></i>
+            <span id="previewDescricao">Sem descrição</span>
+          </div>
+          <div class="preview-divider"></div>
+          <div class="preview-item">
+            <i class="fas fa-user-graduate"></i>
+            <span id="previewAlunos">0 alunos</span>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          window.location.href = '/login.html';
+          return;
+        }
+
+       // Carrega dados do professor
+try {
+  const userRes = await fetch('http://localhost:3000/api/users/me', {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (userRes.ok) {
+    const userData = await userRes.json();
+
+    // Nome do professor
+    document.getElementById('professorName').textContent = 
+      `${userData.data.firstName} ${userData.data.lastName}`;
+
+    // Avatar do professor
+    const avatarPath = userData.data.avatar?.replace(/\\/g, '/');
+    const avatarURL = avatarPath
+      ? (avatarPath.startsWith('http') ? avatarPath : `http://localhost:3000/${avatarPath}`)
+      : `https://i.pravatar.cc/150?u=${userData.data.email}`;
+
+    const avatarEl = document.querySelector('.user-profile img'); // ou o seletor correto na sua página
+    if (avatarEl) {
+      avatarEl.src = avatarURL;
+    }
+  }
+} catch (error) {
+  console.error('Erro ao carregar dados do professor:', error);
+}
+
+
+        // Carrega matérias disponíveis
+        loadMaterias();
+
+        // Configura eventos do formulário
+        setupFormEvents();
+      });
+
+      async function loadMaterias() {
+        const token = localStorage.getItem('token');
+        const select = document.getElementById('materiaId');
+        
+        try {
+          const res = await fetch('http://localhost:3000/api/materias', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            select.innerHTML = '<option value="">Selecione uma matéria</option>' + 
+              data.data.map(materia => 
+                `<option value="${materia._id}">${materia.nome}</option>`
+              ).join('');
+          } else {
+            throw new Error('Erro ao carregar matérias');
+          }
+        } catch (error) {
+          console.error('Erro:', error);
+          select.innerHTML = '<option value="">Erro ao carregar matérias</option>';
+        }
+      }
+
+      function setupFormEvents() {
+        // Atualiza preview conforme dados são inseridos
+        document.getElementById('className').addEventListener('input', (e) => {
+          document.getElementById('previewName').textContent = e.target.value || 'Nova Turma';
+        });
+
+        document.getElementById('materiaId').addEventListener('change', (e) => {
+          const selectedOption = e.target.options[e.target.selectedIndex];
+          document.getElementById('previewMateria').textContent = 
+            selectedOption.text || 'Matéria não selecionada';
+        });
+
+        document.getElementById('descricao').addEventListener('input', (e) => {
+          document.getElementById('previewDescricao').textContent = 
+            e.target.value || 'Sem descrição';
+        });
+
+        // Upload de arquivo
+        const fileUpload = document.getElementById('fileUploadArea');
+        const fileInput = document.getElementById('studentFile');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const removeFile = document.getElementById('removeFile');
+
+        fileUpload.addEventListener('click', () => fileInput.click());
+        fileUpload.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          fileUpload.style.borderColor = '#2563eb';
+          fileUpload.style.backgroundColor = '#f8fafc';
+        });
+        fileUpload.addEventListener('dragleave', () => {
+          fileUpload.style.borderColor = '#d1d5db';
+          fileUpload.style.backgroundColor = 'transparent';
+        });
+        fileUpload.addEventListener('drop', (e) => {
+          e.preventDefault();
+          fileUpload.style.borderColor = '#d1d5db';
+          fileUpload.style.backgroundColor = 'transparent';
+          if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            handleFileSelect();
+          }
+        });
+
+        fileInput.addEventListener('change', handleFileSelect);
+
+        function handleFileSelect() {
+          if (fileInput.files.length) {
+            const file = fileInput.files[0];
+            fileName.textContent = file.name;
+            fileInfo.style.display = 'block';
+            document.getElementById('previewAlunos').textContent = `${fileInput.files.length} arquivo selecionado`;
+          }
+        }
+
+        removeFile.addEventListener('click', (e) => {
+          e.stopPropagation();
+          fileInput.value = '';
+          fileInfo.style.display = 'none';
+          document.getElementById('previewAlunos').textContent = '0 alunos';
+        });
+
+        // Envio do formulário
+        document.getElementById('classForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const form = e.target;
+          const submitBtn = document.getElementById('submitBtn');
+          const submitText = document.getElementById('submitText');
+          const submitSpinner = document.getElementById('submitSpinner');
+          const formMessage = document.getElementById('formMessage');
+
+          // Validação
+          const nome = document.getElementById('className').value.trim();
+          const materiaId = document.getElementById('materiaId').value;
+          
+          if (!nome || !materiaId) {
+            formMessage.textContent = 'Preencha todos os campos obrigatórios';
+            formMessage.style.display = 'block';
+            return;
+          }
+
+          // Prepara dados
+          const turmaData = {
+            nome,
+            materiaId,
+            descricao: document.getElementById('descricao').value.trim()
+          };
+
+          // Desabilita botão e mostra spinner
+          submitBtn.disabled = true;
+          submitText.style.display = 'none';
+          submitSpinner.style.display = 'inline-block';
+          formMessage.style.display = 'none';
+
+          try {
+            const token = localStorage.getItem('token');
+            const res = await fetch('http://localhost:3000/api/salas', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(turmaData)
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+              formMessage.textContent = 'Turma criada com sucesso!';
+              formMessage.className = 'success-message';
+              formMessage.style.display = 'block';
+              
+              // Redireciona após 2 segundos
+              setTimeout(() => {
+                window.location.href = `turmasDetailsProf.html?id=${data.data._id}`;
+              }, 2000);
+            } else {
+              throw new Error(data.message || 'Erro ao criar turma');
+            }
+          } catch (error) {
+            console.error('Erro:', error);
+            formMessage.textContent = error.message || 'Erro ao criar turma. Tente novamente.';
+            formMessage.className = 'error-message';
+            formMessage.style.display = 'block';
+          } finally {
+            submitBtn.disabled = false;
+            submitText.style.display = 'inline-block';
+            submitSpinner.style.display = 'none';
+          }
+        });
+      }
+
+      // Logout
+      document.getElementById('logout').addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        window.location.href = '/login.html';
+      });
+    </script>
+  </body>
+</html>

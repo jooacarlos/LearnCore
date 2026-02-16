@@ -1,0 +1,208 @@
+html: <!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Configurações - Plataforma Educacional</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width" />
+<link rel="stylesheet" href="./css/config.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+<script type="module" src="script.js"></script>
+</head>
+<body>
+         <style>
+    :root {
+      --primary-color: #2563eb;
+      --sidebar-width: 250px;
+      --header-height: 60px;
+      --excellent-color: #059669;
+      --good-color: #0284c7;
+      --average-color: #ca8a04;
+      --poor-color: #dc2626;
+      --background-color: #f3f4f6;
+      --text-color: #374151;
+    }
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--sidebar-width);
+      height: 100vh;
+      background-color: white;
+      box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+      padding: 2rem 0;
+    }
+
+    .sidebar .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      padding: 0 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .sidebar-nav li a {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 2rem;
+      color: #4b5563;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav li a i {
+      margin-right: 0.75rem;
+      width: 20px;
+      
+    }
+
+    .sidebar-nav li a:hover {
+      background-color: var(--background-color);
+      color: var(--primary-color);
+    }
+
+    .sidebar-nav li a.active {
+      background-color: #eff6ff;
+      color: var(--primary-color);
+    
+    }
+
+    /* Ajuste no main-content para não ficar atrás da sidebar */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      padding: 1rem 2rem;
+    }
+  </style>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">LeanCore</div>
+    <nav>
+            <ul class="sidebar-nav">
+        <li><a href="./dashBoardProf.html" ><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="./turmasProf.html"><i class="fas fa-users"></i> Turmas</a></li>
+        <li><a href="./atividadesProf.html"><i class="fas fa-tasks"></i> Atividades</a></li>
+        
+        <li><a href="./dadosProf.html"class="active"><i class="fas fa-cog"></i> Configurações</a></li>
+        
+      </ul>
+    </nav>
+  </aside>
+ 
+    <main class="main-content">
+<div class="header">
+<h1>Configurações</h1>
+<div class="profile-section">
+<input type="search" placeholder="Pesquisar..." class="search-bar">
+
+<div class="user-profile">
+  <img src="https://i.pravatar.cc/32" alt="Foto do perfil" class="avatar profile-image" />
+  <span id="professorName">Carregando...</span>
+</div>
+
+</div>
+</div>
+</div>
+ 
+      <div class="settings-container">
+<div class="settings-section">
+<h2>Perfil do Professor</h2>
+<div class="profile-info">
+<div class="profile-header">
+<div class="profile-photo-container">
+  <img src="https://i.pravatar.cc/150" alt="Profile" class="large-profile-image" />
+</div>
+
+<div class="profile-details">
+<h3>João Silva</h3>
+<p>Professor de Matemática</p>
+
+</div>
+</div>
+<div class="info-grid">
+<div class="info-card">
+<i class="fas fa-envelope"></i>
+<h4>Email</h4>
+<p>joao.silva@edu.com</p>
+</div>
+
+<div class="info-card">
+  <i class="fas fa-school"></i>
+  <h4>Instituição</h4>
+  <p>Carregando...</p>
+</div>
+
+
+</div>
+</div>
+</div>
+ 
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const token = localStorage.getItem('token'); // ou sessionStorage.getItem()
+
+  if (!token) {
+    alert('Usuário não autenticado');
+    window.location.href = '/login.html';
+    return;
+  }
+
+  try {
+    const response = await fetch('http://localhost:3000/api/users/me', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    const userData = await response.json();
+
+    if (!userData.success) {
+      throw new Error('Erro ao obter os dados do usuário');
+    }
+
+    const data = userData.data;
+
+    // Nome do usuário
+    const nameElement = document.querySelector('#professorName');
+    if (nameElement) nameElement.textContent = `${data.firstName} ${data.lastName}`;
+
+    // Nome completo
+    const fullName = document.querySelector('.profile-details h3');
+    if (fullName) fullName.textContent = `${data.firstName} ${data.lastName}`;
+
+    // Email
+    const emailElement = document.querySelector('.info-card:nth-child(1) p');
+    if (emailElement) emailElement.textContent = data.email;
+
+    // Instituição
+    const instituicaoElement = document.querySelector('.info-card:nth-child(2) p');
+    if (instituicaoElement && data.role === 'professor') {
+      instituicaoElement.textContent = data.instituicao || 'Não informado';
+    }
+
+    // Avatar
+    const profileImages = document.querySelectorAll('img.profile-image, .large-profile-image, .avatar');
+    profileImages.forEach(img => {
+      if (data.avatar) {
+        const avatarPath = data.avatar.replace(/\\/g, '/');
+        img.src = avatarPath.startsWith('http') ? avatarPath : `http://localhost:3000/${avatarPath}`;
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao carregar informações do usuário');
+  }
+});
+</script>
+
+</main>
+</body>
+</html>
+ 
+

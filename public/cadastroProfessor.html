@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cadastro Professor</title>
+    <link rel="stylesheet" href="./css/cadastroProf.css" />
+</head>
+<body>
+    <a href="alunoProf.html">
+        <button class="back-button">←</button>
+    </a>
+
+    <div class="login-container">
+        <h1>Cadastro Professor</h1>
+        <form id="signupForm">
+            <input type="text" id="firstName" placeholder="Nome" required />
+            <input type="text" id="lastName" placeholder="Sobrenome" required />
+            <input type="email" id="email" placeholder="Email Institucional" required />
+            <input type="text" id="instituicao" placeholder="Instituição" required />
+            <input type="password" id="password" placeholder="Senha" required />
+            <input type="password" id="confirmPassword" placeholder="Confirmar Senha" required />
+            <!-- <input type="text" id="disciplinas" placeholder="Disciplinas (separadas por vírgula)"> -->
+            <button type="submit">Cadastrar</button>
+        </form>
+        <div class="forgot-password">
+            <a href="./loginProfessor.html">Já tem uma conta? Faça login.</a>
+        </div>
+    </div>
+
+    <!-- Ícone ou texto para abrir o card -->
+<div id="privacyIcon" style="position: fixed; bottom: 20px; right: 20px; cursor: pointer; z-index: 1000; background: #007bff; color: white; padding: 10px 15px; border-radius: 8px; font-weight: bold;">
+    Política de Privacidade
+</div>
+
+<!-- Overlay do card -->
+<div id="privacyOverlay" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:999;">
+    <div style="background: #fff; padding: 25px; border-radius: 12px; max-width: 500px; width: 90%; text-align:left; position: relative;">
+        <h3>Política de Privacidade</h3>
+        <p style="color: black;">
+            Ao se cadastrar, você concorda com nossa política de privacidade. 
+            Seus dados serão utilizados apenas para fins de contato e informações sobre o nosso serviço.
+        </p>
+        <button id="closePrivacy" style="position:absolute; top:10px; right:10px; background:#ff4d4f; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">X</button>
+    </div>
+</div>
+
+<script>
+    const privacyIcon = document.getElementById('privacyIcon');
+    const privacyOverlay = document.getElementById('privacyOverlay');
+    const closePrivacy = document.getElementById('closePrivacy');
+
+    // Ao clicar no ícone, mostrar o card
+    privacyIcon.addEventListener('click', () => {
+        privacyOverlay.style.display = 'flex';
+    });
+
+    // Ao clicar no X, fechar o card
+    closePrivacy.addEventListener('click', () => {
+        privacyOverlay.style.display = 'none';
+    });
+
+    // Ao clicar fora do card, também fecha
+    privacyOverlay.addEventListener('click', (e) => {
+        if (e.target === privacyOverlay) {
+            privacyOverlay.style.display = 'none';
+        }
+    });
+</script>
+
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const instituicao = document.getElementById('instituicao').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (password !== confirmPassword) {
+        alert("As senhas não coincidem!");
+        return;
+    }
+
+    try {
+        const response = await fetch('http://localhost:3000/api/users/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                firstName,
+                lastName,
+                email,
+                password,
+                confirmPassword,
+                role: 'professor',
+                instituicao,
+            }),
+        });
+
+        console.log('Status:', response.status);
+
+        const data = await response.json();
+        console.log('Resposta do backend:', data);
+
+        if (response.ok) {
+            console.log('Cadastro realizado com sucesso!');
+            window.location.href = 'loginProfessor.html';
+        } else {
+            alert(data.message || 'Erro no cadastro');
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao cadastrar. Tente novamente mais tarde.');
+    }
+});
+
+    </script>
+</body>
+</html>

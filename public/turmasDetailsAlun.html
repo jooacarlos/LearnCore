@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <title>Plataforma Educacional</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="./css/turmasDetailsAlu.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+     :root {
+      --primary-color: #2563eb;
+      --sidebar-width: 250px;
+      --header-height: 60px;
+      --excellent-color: #059669;
+      --good-color: #0284c7;
+      --average-color: #ca8a04;
+      --poor-color: #dc2626;
+      --background-color: #f3f4f6;
+      --text-color: #374151;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--sidebar-width);
+      height: 100vh;
+      background-color: white;
+      box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+      padding: 2rem 0;
+    }
+
+    .sidebar .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      padding: 0 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .sidebar-nav li a {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 2rem;
+      color: #4b5563;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav li a i {
+      margin-right: 0.75rem;
+      width: 20px;
+    }
+
+    .sidebar-nav li a:hover {
+      background-color: var(--background-color);
+      color: var(--primary-color);
+    }
+
+    .sidebar-nav li a.active {
+      background-color: #eff6ff;
+      color: var(--primary-color);
+    }
+    
+    /* Progress Bar Styles */
+    .progress-section {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-top: 20px;
+    }
+    
+    .progress-bar-container {
+      position: relative;
+      margin: 15px 0;
+    }
+    
+    .progress-bar {
+      height: 10px;
+      background: #e9ecef;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4e73df, #224abe);
+      border-radius: 5px;
+      width: 0%;
+      transition: width 0.8s ease-out;
+    }
+    
+    .progress-marker {
+      position: absolute;
+      top: -5px;
+      width: 20px;
+      height: 20px;
+      background: #4e73df;
+      border-radius: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .marker-tooltip {
+      position: absolute;
+      top: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #4e73df;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    
+    .progress-details {
+      display: flex;
+      justify-content: space-between;
+      color: #6c757d;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    
+    .progress-error {
+      color: #e74c3c;
+      background: #fdecea;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    /* Atividades Pendentes */
+    #atividadesPendentes {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 2px 6px rgb(37 99 235 / 0.15);
+      margin-top: 1rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text-color);
+    }
+
+    #atividadesPendentes .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    #atividadesPendentes .card-header h3 {
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: #0284c7
+    }
+
+    #atividadesPendentes .card-header .view-all {
+      background: none;
+      border: none;
+      color:#0284c7;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.875rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    #atividadesPendentes .card-header .view-all:hover {
+      background-color: #eff6ff;
+    }
+
+    .atividade-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.75rem;
+      transition: box-shadow 0.3s ease;
+      background-color: #fff;
+    }
+
+    .atividade-item:hover {
+      box-shadow: 0 4px 12px rgb(37 99 235 / 0.25);
+    }
+
+    .atividade-item h4 {
+      margin: 0 0 0.3rem 0;
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--primary-color);
+    }
+
+    .atividade-item p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--text-color);
+    }
+
+    /* Statuses com cores coerentes */
+    .atividade-item.pendente {
+     border-left: 5px solid #2563eb;
+    }
+
+    .atividade-item.atrasada {
+      border-left: 5px solid var(--poor-color);
+      background-color: #fef2f2;
+    }
+
+    .atividade-item.entregue {
+      border-left: 5px solid var(--good-color);
+      background-color: #eff6ff;
+    }
+
+    .atividade-item.corrigida {
+      border-left: 5px solid var(--excellent-color);
+      background-color: #ecfdf5;
+    }
+    .welcome-card {
+  background-color: var(--background-color);
+  border-radius: 12px;
+  padding: 25px 30px;
+  box-shadow: 0 6px 12px rgba(37, 99, 235, 0.2);
+  max-width: 700px;
+  margin: 30px auto;
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-color);
+  border: 2px solid var(--primary-color);
+}
+
+.welcome-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+.welcome-header h3 {
+  font-weight: 700;
+  font-size: 1.7rem;
+  color: var(--primary-color);
+}
+
+.welcome-header i {
+  color: var(--primary-color);
+  font-size: 2rem;
+}
+
+.welcome-content p {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  margin-bottom: 15px;
+}
+
+.welcome-content ul {
+  list-style: inside disc;
+  margin-bottom: 20px;
+  color: var(--text-color);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.welcome-content ul li {
+  margin-bottom: 10px;
+}
+
+.welcome-content ul li strong {
+  color: var(--primary-color);
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+      <!-- Sidebar -->
+     <aside class="sidebar">
+      <div class="logo">LeanCore</div>
+      <nav>
+        <ul class="sidebar-nav">
+          <li><a href="./dashBoardAlu.html"><i class="fas fa-home"></i> Dashboard</a></li>
+          <li><a href="./turmasAlun.html" class="active"><i class="fas fa-users"></i> Turmas</a></li>
+          <li><a href="./atividades.html"><i class="fas fa-tasks"></i> Atividades</a></li>
+          <li><a href="./feedback.html"><i class="fas fa-check-circle"></i> Correções</a></li>
+          <li><a href="./dadosAluno.html"><i class="fas fa-cog"></i> Configurações</a></li>
+          
+          
+        </ul>
+      </nav>
+    </aside>
+
+      <main class="main-content">
+        <!-- Header -->
+        <header class="header" id="studentHeader">
+          <!-- Será preenchido dinamicamente -->
+        </header>
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb" id="breadcrumb">
+          <!-- Será preenchido dinamicamente -->
+        </div>
+
+        <!-- Class Content -->
+        <div class="class-container">
+          <!-- Class Header with Progress -->
+          <div class="class-header" id="classHeader">
+            <!-- Será preenchido dinamicamente -->
+          </div>
+
+          <div class="content-grid">
+            <!-- Left Column -->
+            <div class="main-section">
+              <!-- Próximas Aulas -->
+              <div class="class-card" id="proximasAulas">
+                <!-- Será preenchido dinamicamente -->
+              </div>
+
+              <!-- Material de Estudo -->
+              <!-- Material de Estudo -->
+<div class="welcome-card">
+  <div class="welcome-header">
+    <h3><i class="fas fa-book-reader"></i> Bem-vindo(a) ao LearnCore</h3>
+  </div>
+  <div class="welcome-content">
+    <p>
+      Seja bem-vindo(a) à plataforma LearnCore! Para garantir uma experiência produtiva e agradável, pedimos que:
+    </p>
+    <ul>
+      <li><strong>Comprometa-se</strong> com seu aprendizado, dedicando tempo e atenção às atividades.</li>
+      <li><strong>Mantenha o respeito</strong> com colegas e professores, promovendo um ambiente saudável e colaborativo.</li>
+      <li><strong>Entregue suas tarefas no prazo</strong> para garantir o melhor aproveitamento e feedbacks precisos.</li>
+      <li><strong>Aproveite os recursos</strong> que a plataforma oferece para potencializar seus estudos.</li>
+    </ul>
+    <p>
+      Estamos aqui para ajudar você a crescer e alcançar seus objetivos acadêmicos com eficiência e qualidade!
+    </p>
+  </div>
+</div>
+
+
+            </div>
+
+            <!-- Right Column -->
+            <div class="side-section">
+              <!-- Atividades Pendentes -->
+              <div class="class-card" id="atividadesPendentes">
+                <!-- Será preenchido dinamicamente -->
+              </div>
+
+              <!-- Avisos -->
+              <div class="class-card" id="avisosTurma">
+                <!-- Será preenchido dinamicamente -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Class Members -->
+          <div class="class-members-section" id="colegasTurma">
+            <!-- Será preenchido dinamicamente -->
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Configuração base da API
+      const API_BASE_URL = 'http://localhost:3000'; // Ajuste conforme necessário
+
+      // Função para obter o ID da turma da URL
+      function getTurmaIdFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('id');
+      }
+
+      // Função para fazer requisições autenticadas
+      async function fetchAutenticado(endpoint, options = {}) {
+        const token = localStorage.getItem('token');
+        const resposta = await fetch(`${API_BASE_URL}/api${endpoint}`, {
+          ...options,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            ...options.headers
+          }
+        });
+
+        if (!resposta.ok) {
+          const errorData = await resposta.json().catch(() => ({}));
+          throw new Error(errorData.message || 'Erro na requisição');
+        }
+        return await resposta.json();
+      }
+
+      // Função para formatar data
+      function formatarData(dataString) {
+        if (!dataString) return 'Sem prazo';
+        const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+        return new Date(dataString).toLocaleDateString('pt-BR', options);
+      }
+
+      // Função para calcular tempo relativo (ex: "há 2 dias")
+      function tempoRelativo(dataString) {
+        const agora = new Date();
+        const data = new Date(dataString);
+        const diff = agora - data;
+        const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+        if (dias === 0) return 'hoje';
+        if (dias === 1) return 'ontem';
+        return `há ${dias} dias`;
+      }
+
+      // Função para formatar tamanho de arquivo
+      function formatarTamanho(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        else return (bytes / 1048576).toFixed(1) + ' MB';
+      }
+
+      // Função para formatar status
+      function formatarStatus(status) {
+        switch(status) {
+          case 'pendente': return 'Pendente';
+          case 'entregue': return 'Entregue';
+          case 'atrasada': return 'Atrasada';
+          case 'corrigida': return 'Corrigida';
+          default: return status;
+        }
+      }
+
+      // Função para calcular horas restantes baseado no progresso
+      function calcularHorasRestantes(porcentagem) {
+        const totalHorasCurso = 60; // Total estimado do curso
+        const horasCompletas = (porcentagem / 100) * totalHorasCurso;
+        return Math.round(totalHorasCurso - horasCompletas);
+      }
+
+      // Carregar dados do aluno
+      async function carregarDadosAluno() {
+        try {
+          const { data } = await fetchAutenticado('/users/me');
+          const header = document.getElementById('studentHeader');
+          if (!header) return;
+
+          header.innerHTML = `
+            <div class="student-info">
+              <img src="${data.avatar || 'https://i.pravatar.cc/150?img=12'}" alt="Foto do Aluno" class="student-photo">
+              <div class="student-details">
+                <h2>${data.firstName} ${data.lastName}</h2>
+                
+              </div>
+            </div>
+            <div class="header-actions">
+              <div class="search-bar">
+                <input type="text" placeholder="Pesquisar...">
+                <i class="fas fa-search"></i>
+              </div>
+              <div class="notification-area">
+                <div class="notification-icon">
+                  <i class="fas fa-bell"></i>
+                  <span class="notification-badge">3</span>
+                </div>
+                <div class="notification-icon">
+                  <i class="fas fa-envelope"></i>
+                  <span class="notification-badge">5</span>
+                </div>
+              </div>
+            </div>
+          `;
+        } catch (error) {
+          console.error('Erro ao carregar dados do aluno:', error);
+          alert('Não foi possível carregar seus dados. Por favor, tente novamente mais tarde.');
+        }
+      }
+
+      // Atualizar a UI do progresso
+      function updateProgressUI(data) {
+        const classHeader = document.getElementById('classHeader');
+        if (!classHeader) return;
+
+        // Formata os números para exibição
+        const progresso = data.progresso || { porcentagem: 0, tarefasCompletas: 0, totalTarefas: 0 };
+        const horasRestantes = calcularHorasRestantes(progresso.porcentagem);
+
+      classHeader.innerHTML = `
+  <div class="class-info">
+    <h1>${data.turma.nome}</h1>
+    <p class="teacher">Prof. ${data.turma.professor.firstName} ${data.turma.professor.lastName}</p>
+    <p class="description">${data.turma.descricao}</p>
+    <div class="class-stats">
+      <div class="stat-item">
+        <i class="fas fa-users"></i>
+        <span>${data.turma.totalAlunos} alunos</span>
+      </div>
+      <div class="stat-item">
+        <i class="fas fa-book"></i>
+        <span>${data.turma.materias[0].nome} - ${data.turma.materias[0].descricao}</span>
+      </div>
+    </div>
+  </div>
+`;
+
+
+        // Configura animação da barra
+        setTimeout(() => {
+          const progressFill = document.querySelector('.progress-fill');
+          if (progressFill) {
+            progressFill.style.width = `${progresso.porcentagem}%`;
+          }
+        }, 100);
+      }
+
+      // Carregar dados da turma
+      async function carregarDadosTurma() {
+        const turmaId = getTurmaIdFromUrl();
+        if (!turmaId) return;
+
+        try {
+          const { data } = await fetchAutenticado(`/salas/${turmaId}/dashboard`);
+          
+          // Atualiza a UI do progresso
+          updateProgressUI(data);
+
+          const breadcrumb = document.getElementById('breadcrumb');
+          if (breadcrumb) {
+            breadcrumb.innerHTML = `
+              <a href="turmasAlun.html">Turmas</a>
+              <i class="fas fa-chevron-right"></i>
+              <a href="#">${data.turma.nome}</a>
+              <i class="fas fa-chevron-right"></i>
+              <span>Visão Geral</span>
+            `;
+          }
+
+          // Carregar outros dados relacionados à turma
+          const { data: materiais } = await fetchAutenticado(`/materias/salas/${turmaId}`);
+          preencherMateriaisEstudo(materiais);
+
+          const { data: tarefas } = await fetchAutenticado(`/tarefas?turmaId=${turmaId}`);
+          
+          // Passa o alunoId para preencherAtividadesPendentes
+          const alunoId = (await fetchAutenticado('/users/me')).data._id;
+          preencherAtividadesPendentes(tarefas, alunoId);
+
+          const { data: avisos } = await fetchAutenticado(`/avisos/turmas/${turmaId}/avisos`);
+          preencherAvisos(avisos);
+
+          const { data: colegas } = await fetchAutenticado(`/salas/${turmaId}/alunos`);
+          preencherColegasTurma(colegas);
+
+        } catch (error) {
+          console.error('Erro ao carregar dados da turma:', error);
+          alert('Não foi possível carregar os dados da turma. Verifique sua conexão.');
+        }
+      }
+
+      // Preencher materiais de estudo
+      function preencherMateriaisEstudo(materiais) {
+        const container = document.getElementById('materialEstudo');
+        if (!container) return;
+
+        let html = `
+          <div class="card-header">
+            <h3><i class="fas fa-book"></i> Material de Estudo</h3>
+            <button class="view-all">Ver Todos</button>
+          </div>
+          <div class="materials-grid">
+        `;
+
+        materiais.forEach(materia => {
+          materia.arquivos.forEach(arquivo => {
+            const tipoIcone = arquivo.tipo.includes('pdf') ? 'file-pdf' : 
+                             arquivo.tipo.includes('video') ? 'video' : 'file';
+            
+            html += `
+              <div class="material-item">
+                <i class="fas fa-${tipoIcone}"></i>
+                <div class="material-info">
+                  <h4>${arquivo.nome}</h4>
+                  <p>${arquivo.tipo.split('/')[1].toUpperCase()} • ${formatarTamanho(arquivo.tamanho)}</p>
+                </div>
+                <button class="download-btn" onclick="window.open('${arquivo.url}', '_blank')">
+                  <i class="fas fa-download"></i>
+                </button>
+              </div>
+            `;
+          });
+        });
+
+        html += `</div>`;
+        container.innerHTML = html;
+      }
+
+      // Preencher atividades pendentes (agora com alunoId obrigatório)
+      function preencherAtividadesPendentes(tarefas, alunoId) {
+        const container = document.getElementById('atividadesPendentes');
+        if (!container) return;
+
+        const ultimasTarefas = tarefas
+          .map(tarefa => {
+            const entrega = tarefa.entregas?.find(e => String(e.alunoId) === String(alunoId));
+            let status = entrega?.status || 'pendente';
+            const atrasada = new Date(tarefa.dataEntrega) < new Date();
+
+            if (status === 'pendente' && atrasada) status = 'atrasada';
+            
+            return { ...tarefa, entregaStatus: status };
+          })
+          .sort((a, b) => new Date(a.dataEntrega) - new Date(b.dataEntrega))
+          .slice(0, 3);
+
+        let html = `
+          <div class="card-header">
+            <h3><i class="fas fa-tasks"></i> Atividades</h3>
+            <button class="view-all" onclick="window.location.href='atividades.html?id=${getTurmaIdFromUrl()}'">Ver Todas</button>
+          </div>
+        `;
+
+        if (ultimasTarefas.length === 0) {
+          html += '<p>Você não tem atividades pendentes.</p>';
+        } else {
+          ultimasTarefas.forEach(tarefa => {
+            const dataFormatada = formatarData(tarefa.dataEntrega);
+            const statusFormatado = formatarStatus(tarefa.entregaStatus);
+
+            html += `
+              <div class="atividade-item ${tarefa.entregaStatus}">
+                <h4>${tarefa.titulo}</h4>
+                <p>Prazo: ${dataFormatada}</p>
+              
+              </div>
+            `;
+          });
+        }
+
+        container.innerHTML = html;
+      }
+
+      // Preencher avisos da turma
+      function preencherAvisos(avisos) {
+        const container = document.getElementById('avisosTurma');
+        if (!container) return;
+
+        let html = `
+          <div class="card-header">
+            <h3><i class="fas fa-bullhorn"></i> Avisos</h3>
+          </div>
+          <div class="announcements-list">
+        `;
+
+        avisos.forEach(aviso => {
+          html += `
+            <div class="announcement-item">
+              <div class="announcement-header">
+                <img src="${aviso.autor.avatar || 'https://i.pravatar.cc/50?img=8'}" alt="Professor">
+                <div class="announcement-meta">
+                  <h4>${aviso.autor.firstName} ${aviso.autor.lastName}</h4>
+                  <span>${tempoRelativo(aviso.dataPublicacao)}</span>
+                </div>
+              </div>
+              <p>${aviso.conteudo}</p>
+            </div>
+          `;
+        });
+
+        html += `</div>`;
+        container.innerHTML = html;
+      }
+
+      // Preencher colegas de turma
+      function preencherColegasTurma(alunos) {
+        const container = document.getElementById('colegasTurma');
+        if (!container) return;
+
+        let html = `
+          <div class="section-header">
+            <h3>Colegas da Turma</h3>
+          </div>
+          <div class="members-grid">
+        `;
+
+        alunos.forEach(aluno => {
+          html += `
+            <div class="member-card">
+              <img src="${aluno.avatar || 'https://i.pravatar.cc/50?img=' + Math.floor(Math.random() * 70)}" alt="Aluno">
+              <div class="member-info">
+                <h4>${aluno.firstName} ${aluno.lastName}</h4>
+              </div>
+            </div>
+          `;
+        });
+
+        html += `</div>`;
+        container.innerHTML = html;
+      }
+
+      // Função para atualizar progresso após enviar tarefa
+      async function atualizarProgressoAposEntrega(turmaId) {
+        try {
+          const { data } = await fetchAutenticado(`/salas/${turmaId}/dashboard`);
+          updateProgressUI(data);
+        } catch (error) {
+          console.error('Erro ao atualizar progresso:', error);
+        }
+      }
+
+      // Inicialização dos carregamentos após DOM pronto
+      document.addEventListener('DOMContentLoaded', () => {
+        carregarDadosAluno();
+        carregarDadosTurma();
+      });
+
+      // Logout
+      document.getElementById('logout').addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        window.location.href = '/login.html';
+      });
+    </script>
+</body>
+</html>

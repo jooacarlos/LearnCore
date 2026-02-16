@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <title>Dashboard do Aluno</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="./css/feedback.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background-color: #c7c2c2; /* cinza escuro */
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 75%; /* Aqui você define o valor da barra */
+  background-color: #1dd041; /* azul claro, combinando com seu tema */
+  transition: width 0.3s ease;
+}
+    </style>
+  </head>
+
+  <body>
+    <!-- Sidebar Base -->
+    <aside class="sidebar">
+      <div class="logo">LeanCore</div>
+      <nav>
+        <ul class="sidebar-nav">
+          <li><a href="dashBoardAlu.html" ><i class="fas fa-home"></i> Dashboard</a></li>
+          <li><a href="./turmasAlun.html"><i class="fas fa-users"></i> Turmas</a></li>
+          <li><a href="./atividades.html"><i class="fas fa-tasks"></i> Atividades</a></li>
+          <li><a href="feedback.html" class="active"><i class="fas fa-check-circle"></i> Correções</a></li>
+          
+          <li><a href="./dadosAluno.html"><i class="fas fa-cog"></i> Configurações</a></li>
+          
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Header Base -->
+    <header class="header">
+      <h1>Dashboard do Aluno</h1>
+      <div class="header-right">
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Pesquisar...">
+        </div>
+        <div class="notifications">
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge">2</span>
+        </div>
+        <div class="user-profile">
+          <img src="https://i.pravatar.cc/32" alt="Foto do perfil" class="avatar" id="userAvatar">
+          <span id="alunoName">Carregando...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header with Student Info -->
+      <div class="student-info">
+        <img src="./images/aluno.jpg" alt="Foto do Aluno" class="student-avatar">
+        <div class="student-details">
+          <h1 id="studentFullName">João Silva</h1>
+          <p>Turma: 3º Ano A - Matemática Avançada</p>
+        </div>
+        <div class="gamification">
+          <div class="points">
+            <div class="points-value">1250</div>
+            <div>Pontos</div>
+          </div>
+          <div class="badges">
+            <div class="badges-list">
+              <div class="badge" title="Mestre da Matemática">
+                <i class="fas fa-calculator"></i>
+              </div>
+              <div class="badge" title="Super Dedicado">
+                <i class="fas fa-star"></i>
+              </div>
+              <div class="badge" title="Rei dos Quizzes">
+                <i class="fas fa-crown"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Restante do conteúdo permanece exatamente igual -->
+      <!-- Meta Progress -->
+      <section class="goals-progress">
+        <h2>Progresso da Meta Semanal</h2>
+        <p>75% concluído - Faltam 2 dias</p>
+        <div class="progress-bar">
+          <div class="progress-bar-fill"></div>
+        </div>
+      </section>
+
+      <!-- Conquistas Recentes -->
+      <section class="achievements">
+        <h2>Conquistas Recentes</h2>
+        <div class="achievements-list">
+          <div class="achievement-card">
+            <i class="fas fa-trophy"></i>
+            <h3>Mestre da Matemática</h3>
+            <p>Completou 10 exercícios de Matemática com nota máxima</p>
+          </div>
+          <div class="achievement-card">
+            <i class="fas fa-chart-line"></i>
+            <h3>Evolução Constante</h3>
+            <p>Melhorou 15% em Física nas últimas duas semanas</p>
+          </div>
+          <div class="achievement-card">
+            <i class="fas fa-fire"></i>
+            <h3>Dedicação Total</h3>
+            <p>Estudou por 7 dias consecutivos</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Plano de Estudos -->
+      <section class="study-plan">
+        <h2>Plano de Estudos Personalizado</h2>
+        <div class="study-plan-day">
+          <h3>Segunda-feira</h3>
+          <ul>
+            <li>09:00 - Matemática: Revisão de Equações do 2º Grau</li>
+            <li>11:00 - Física: Exercícios de Cinemática</li>
+            <li>14:00 - Química: Videoaula sobre Balanceamento</li>
+          </ul>
+        </div>
+        <div class="study-plan-day">
+          <h3>Terça-feira</h3>
+          <ul>
+            <li>09:00 - Física: Resolução de Problemas</li>
+            <li>11:00 - Matemática: Quiz de Geometria</li>
+            <li>14:00 - Biologia: Resumo do Capítulo</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Resumo do Desempenho -->
+      <section class="performance-summary">
+        <h2>Resumo do Desempenho</h2>
+        <div class="performance-cards">
+          <div class="performance-card">
+            <canvas id="performanceChart"></canvas>
+          </div>
+          <div class="performance-card attention">
+            <h3>Áreas que Precisam de Atenção</h3>
+            <ul>
+              <li><i class="fas fa-exclamation-circle"></i> Matemática: Equações</li>
+              <li><i class="fas fa-exclamation-circle"></i> Física: Cinemática</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feedback do Professor -->
+      <section class="teacher-feedback-section">
+        <h2>Feedback do Professor</h2>
+        <div class="teacher-feedback">
+          <h3>Prof. Carlos - Matemática</h3>
+          <p>João tem demonstrado grande evolução na resolução de problemas complexos. 
+             Sugiro focar mais nos exercícios de Geometria Espacial para melhorar ainda mais seu desempenho.</p>
+        </div>
+        <div class="teacher-feedback">
+          <h3>Profa. Ana - Física</h3>
+          <p>Ótimo progresso em Dinâmica! Para melhorar em Cinemática, recomendo resolver mais exercícios práticos 
+             e assistir às videoaulas sugeridas.</p>
+        </div>
+      </section>
+
+      <!-- Dúvidas Frequentes -->
+      <section class="faq-section">
+        <h2>Dúvidas Frequentes</h2>
+        <div class="faq-list">
+          <div class="faq-item">
+            <div class="faq-question">
+              Como calcular o delta em uma equação do 2º grau?
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+              O delta (Δ) é calculado usando a fórmula: Δ = b² - 4ac, onde a, b e c são os coeficientes da equação ax² + bx + c = 0.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
+              Como identificar o MRUV na Física?
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+              O MRUV (Movimento Retilíneo Uniformemente Variado) é caracterizado por uma aceleração constante, 
+              onde a velocidade varia uniformemente com o tempo.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Erros Comuns -->
+      <section class="common-errors">
+        <h2>Erros Comuns</h2>
+        <div class="accordion">
+          <div class="accordion-item">
+            <button class="accordion-header">
+              <i class="fas fa-calculator"></i> Matemática: Equações do 2º Grau
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="accordion-content">
+              <p>Erro comum: Esquecimento do ± na fórmula de Bhaskara</p>
+              <p>Como corrigir: Lembre-se que equações do 2º grau podem ter duas raízes.</p>
+              <div class="suggestion">
+                <h4>Material de Apoio</h4>
+                <a href="#" class="resource-link"><i class="fab fa-youtube"></i> Vídeo: Resolvendo Equações do 2º Grau</a>
+                <a href="#" class="resource-link"><i class="fas fa-book"></i> Lista de Exercícios</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sugestões de Melhoria -->
+      <section class="improvement-suggestions">
+        <h2>Sugestões de Melhoria</h2>
+        <div class="suggestions-grid">
+          <div class="suggestion-card">
+            <i class="fas fa-video"></i>
+            <h3>Vídeos Recomendados</h3>
+            <ul>
+              <li><a href="#">Introdução à Geometria</a></li>
+              <li><a href="#">Funções Quadráticas</a></li>
+            </ul>
+          </div>
+          <div class="suggestion-card">
+            <i class="fas fa-tasks"></i>
+            <h3>Atividades Práticas</h3>
+            <ul>
+              <li><a href="#">Quiz de Matemática Básica</a></li>
+              <li><a href="#">Exercícios de Física</a></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Progresso e Metas -->
+      <section class="progress-goals">
+        <h2>Seu Progresso</h2>
+        <div class="progress-container">
+          <canvas id="progressChart"></canvas>
+        </div>
+        <div class="goals">
+          <h3>Metas para a Próxima Semana</h3>
+          <ul>
+            <li><i class="fas fa-target"></i> Melhorar 20% em Geometria</li>
+            <li><i class="fas fa-target"></i> Completar 10 exercícios de Física</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // Performance Chart
+      const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+      new Chart(performanceCtx, {
+        type: 'radar',
+        data: {
+          labels: ['Matemática', 'Física', 'Química', 'Biologia', 'História', 'Geografia'],
+          datasets: [{
+            label: 'Seu Desempenho',
+            data: [65, 59, 80, 81, 56, 75],
+            fill: true,
+            backgroundColor: 'rgba(37, 99, 235, 0.2)',
+            borderColor: 'rgba(37, 99, 235, 1)',
+            pointBackgroundColor: 'rgba(37, 99, 235, 1)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(37, 99, 235, 1)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          elements: {
+            line: {
+              borderWidth: 3
+            }
+          },
+          scales: {
+            r: {
+              angleLines: {
+                display: true
+              },
+              suggestedMin: 0,
+              suggestedMax: 100,
+              ticks: {
+                stepSize: 20
+              }
+            }
+          }
+        }
+      });
+
+      // Progress Chart
+      const progressCtx = document.getElementById('progressChart').getContext('2d');
+      new Chart(progressCtx, {
+        type: 'line',
+        data: {
+          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio'],
+          datasets: [{
+            label: 'Progresso Geral',
+            data: [65, 70, 68, 75, 82],
+            fill: false,
+            borderColor: 'rgba(34, 197, 94, 1)',
+            tension: 0.1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100
+            }
+          }
+        }
+      });
+
+      // Accordion functionality
+      document.querySelectorAll('.accordion-header').forEach(button => {
+        button.addEventListener('click', () => {
+          const content = button.nextElementSibling;
+          content.classList.toggle('active');
+          
+          // Toggle icon
+          const icon = button.querySelector('.fa-chevron-down');
+          icon.style.transform = content.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0)';
+        });
+      });
+
+      // FAQ functionality
+      document.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', () => {
+          const answer = question.nextElementSibling;
+          answer.classList.toggle('active');
+          
+          // Toggle icon
+          const icon = question.querySelector('.fa-chevron-down');
+          icon.style.transform = answer.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0)';
+        });
+      });
+
+      // Add hover animations for cards
+      document.querySelectorAll('.achievement-card, .suggestion-card, .study-plan-day').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          card.style.transform = 'translateY(-4px)';
+        });
+        
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'translateY(0)';
+        });
+      });
+
+      // Carrega dados do aluno
+      document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          window.location.href = '/login.html';
+          return;
+        }
+
+        try {
+          const response = await fetch('http://localhost:3000/api/users/me', {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Erro ao carregar dados do usuário');
+          }
+
+          const userData = await response.json();
+
+          // Verifica se é aluno
+          if (userData.data.role !== 'aluno') {
+            localStorage.removeItem('token');
+            window.location.href = '/public/loginProfessor.html';
+            return;
+          }
+
+          // Exibe nome do aluno no header
+          document.getElementById('alunoName').textContent = 
+            `${userData.data.firstName} ${userData.data.lastName}`;
+
+          // Exibe nome completo na seção principal
+          document.getElementById('studentFullName').textContent = 
+            `${userData.data.firstName} ${userData.data.lastName}`;
+
+          // Atualiza avatar
+          const avatarImg = document.getElementById('userAvatar');
+          const studentAvatar = document.querySelector('.student-avatar');
+          
+          if (userData.data.avatar) {
+            const avatarUrl = userData.data.avatar.startsWith('http') 
+              ? userData.data.avatar 
+              : `http://localhost:3000/uploads/avatars/${userData.data.avatar}`;
+            
+            avatarImg.src = avatarUrl;
+            studentAvatar.src = avatarUrl;
+          }
+
+        } catch (error) {
+          console.error('Erro ao carregar dados do aluno:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: 'Não foi possível carregar os dados do aluno',
+            confirmButtonColor: '#3b82f6',
+          });
+        }
+
+        // Configura logout
+        document.getElementById('logout').addEventListener('click', (e) => {
+          e.preventDefault();
+          localStorage.removeItem('token');
+          window.location.href = '/login.html';
+        });
+      });
+    </script>
+  </body>
+</html>

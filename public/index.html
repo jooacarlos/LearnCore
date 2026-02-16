@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnCore</title>
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+       
+        
+</head>
+<body>
+    <header>
+        <div class="logo">LearnCore</div>
+        <nav>
+            <ul>
+                <li><a href="#inicio">Início</a></li>
+                <li><a href="#sobre">Sobre</a></li>
+                
+            </ul>
+        </nav>
+        <div class="botoes">
+            <a href="./alunoProfLogin.html">
+            <button class="botao">Login</button>
+            </a>
+            <a href="alunoProf.html">
+            <button class="botao">Cadastre-se</button>
+        </a>
+        </div>
+    </header>
+
+    <main>
+        <section class="principal" id="inicio">
+            <h1>Faça seu trabalho se tornar mais eficiente</h1>
+            <p>LearnCore torna isso possível!</p>
+            <div class="chamada">
+                <input id="emailInput" type="email" placeholder="Digite seu email">
+<button onclick="redirecionarLogin()">Entre em LearnCore</button>
+
+<script>
+function redirecionarLogin() {
+    const email = document.getElementById("emailInput").value;
+    if (email) {
+        const url = `loginAluno.html?email=${encodeURIComponent(email)}`;
+        window.location.href = url;
+    } else {
+        alert("Por favor, insira um email válido.");
+    }
+}
+</script>
+
+            </div>
+        </section>
+
+        <section class="sobre" id="sobre">
+            <h2>Sobre Nós</h2>
+            <p>
+                Somos um grupo de estudantes dedicados a criar soluções inovadoras que otimizam o feedback de tarefas , utilizando tecnologia inteligente para facilitar o trabalho de educadores.
+            </p>
+            <div class="recursos">
+                <div class="recurso">Feedbacks</div>
+                
+                                <div class="recurso">Análise de Respostas</div>
+               
+                <div class="recurso">IA</div>
+            </div>
+        </section>
+
+        <section class="beneficios">
+            <h2>Benefícios</h2>
+            <p>Faça parte do poder da inteligência artificial ao analisar lições e projetos de forma rápida, confiável e inovadora.</p>
+        </section>
+    </main>
+
+    <footer class="rodape">
+        <div class="rodape-topo">
+            <h1>LearnCore</h1>
+            <p>Simplificando a educação com tecnologia avançada.</p>
+        </div>
+
+        <a href="#inicio" class="voltar-topo">Voltar ao topo</a>
+    </footer>
+</body>
+</html>

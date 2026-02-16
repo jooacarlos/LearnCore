@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <title>LeanCore - Minhas Atividades</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="./css/atividades.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos adicionais para melhorar a visualização */
+        .activities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .activity-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .activity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .activity-icon {
+            font-size: 2rem;
+            color: #4e73df;
+            margin-bottom: 15px;
+        }
+        
+        .activity-card h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        
+        .activity-card p {
+            margin: 5px 0;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .activity-card p i {
+            margin-right: 8px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .grade-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .grade-badge.excellent {
+            background: #28a745;
+            color: black;
+        }
+        
+        .grade-badge.good {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .grade-badge.regular {
+            background: #fd7e14;
+        }
+        
+        .grade-badge.bad {
+            background: #dc3545;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        
+        .status-corrected {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-none{
+            background-color: #ffc107;
+            color: #212529;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-late {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-delivered {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .page-title {
+            margin: 0;
+            color: #2c3e50;
+        }
+        
+        .filter-select {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background: #fff;
+        }
+        
+        .loading {
+            display: none;
+            margin: 20px auto;
+            border: 5px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 5px solid #3498db;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #fdecea;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .no-activities {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">LeanCore</div>
+        <nav>
+            <ul class="sidebar-nav">
+                <li><a href="dashBoardAlu.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="./turmasAlun.html"><i class="fas fa-users"></i> Turmas</a></li>
+                <li><a href="./atividades.html" class="active"><i class="fas fa-tasks"></i> Atividades</a></li>
+                <li><a href="feedback.html"><i class="fas fa-check-circle"></i> Correções</a></li>
+              
+                <li><a href="./dadosAluno.html"><i class="fas fa-cog"></i> Configurações</a></li>
+              
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Header -->
+    <header class="header">
+        <h1>Minhas Atividades</h1>
+        <div class="header-right">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Pesquisar..." id="searchInput">
+            </div>
+            <div class="notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationCount">0</span>
+            </div>
+            <div class="user-profile">
+                <img src="https://i.pravatar.cc/32" alt="Foto do perfil" class="avatar">
+                <span id="studentName">Carregando...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Minhas Atividades</h1>
+            <div class="filters">
+              
+            </div>
+        </div>
+
+        <div class="loading" id="loadingSpinner"></div>
+        <div class="error-message" id="errorMessage"></div>
+        
+        <div class="activities-grid" id="activitiesGrid">
+            <!-- Atividades serão carregadas dinamicamente aqui -->
+        </div>
+    </main>
+
+
+
+    <script>
+   document.addEventListener('DOMContentLoaded', async () => {
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (!token || !user) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Elementos da UI
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const errorMessage = document.getElementById('errorMessage');
+    const activitiesGrid = document.getElementById('activitiesGrid');
+    const studentName = document.getElementById('studentName');
+    const filterSelect = document.getElementById('filterSelect');
+    const notificationCount = document.getElementById('notificationCount');
+
+    // Atualiza nome do aluno no cabeçalho
+    studentName.textContent = `${user.firstName} ${user.lastName}`;
+
+    // Atualiza avatar
+    if (user.avatar) {
+        const avatarPath = user.avatar.replace(/\\/g, '/');
+        const avatarEl = document.querySelector('.user-profile img');
+        avatarEl.src = avatarPath.startsWith('http')
+            ? avatarPath
+            : `http://localhost:3000/${avatarPath}`;
+    }
+
+    // Função para carregar atividades
+    async function loadActivities(filter = 'todas') {
+        try {
+            // Mostra loading
+            loadingSpinner.style.display = 'block';
+            activitiesGrid.innerHTML = '';
+            errorMessage.style.display = 'none';
+
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            };
+
+            // Busca todas as tarefas do aluno
+            const response = await fetch('http://localhost:3000/api/tarefas', { headers });
+
+            if (!response.ok) {
+                throw new Error('Erro ao carregar atividades');
+            }
+
+            const data = await response.json();
+            let atividades = data.data;
+
+            // Filtra tarefas atribuídas ao aluno direta ou indiretamente (via turmas)
+            atividades = atividades.filter(tarefa =>
+                tarefa.alunosAtribuidos?.includes(user._id) ||
+                (tarefa.turmas && tarefa.turmas.some(turma => turma.alunos?.includes(user._id)))
+            );
+
+            // Aplica filtro de status selecionado
+            switch (filter) {
+                case 'pendentes':
+                    atividades = atividades.filter(a => a.status === 'pendente' || a.status === 'ativa');
+                    break;
+                case 'entregues':
+                    atividades = atividades.filter(a => a.status === 'entregue');
+                    break;
+                case 'corrigidas':
+                    atividades = atividades.filter(a => a.status === 'corrigida');
+                    break;
+                case 'atrasadas':
+                    atividades = atividades.filter(a =>
+                        (a.status === 'pendente' || a.status === 'ativa') &&
+                        new Date(a.dataEntrega) < new Date()
+                    );
+                    break;
+            }
+
+            // Ordena por data de entrega crescente (mais próximas primeiro)
+            atividades.sort((a, b) => new Date(a.dataEntrega) - new Date(b.dataEntrega));
+
+            // Atualiza contador de notificações (tarefas pendentes)
+            const tarefasPendentes = data.data.filter(tarefa =>
+                (tarefa.status === 'pendente' || tarefa.status === 'ativa') &&
+                (tarefa.alunosAtribuidos?.includes(user._id) ||
+                    (tarefa.turmas && tarefa.turmas.some(turma => turma.alunos?.includes(user._id)))
+                )
+            ).length;
+
+            notificationCount.textContent = tarefasPendentes;
+
+            // Renderiza atividades na grade
+            if (atividades.length === 0) {
+                activitiesGrid.innerHTML = `
+                    <div class="no-activities">
+                        
+                        <p>Nenhuma atividade encontrada</p>
+                    </div>
+                `;
+            } else {
+                activitiesGrid.innerHTML = atividades.map(atividade => {
+    const alunoId = user._id; // <-- aqui
+
+    // Ícone da matéria (primeira matéria da primeira turma)
+    const materia = atividade.turmas?.[0]?.materias?.[0]?.nome || 'Atividade';
+    const icon = getMateriaIcon(materia);
+
+    // Datas formatadas
+    const entregueEm = atividade.entregas?.[0]?.dataEntrega
+        ? formatarData(atividade.entregas[0].dataEntrega)
+        : null;
+
+    // Status e nota
+    const entregaDoAluno = atividade.entregas.find(e => e.aluno.toString() === alunoId);
+
+    let status, statusClass, nota;
+
+    if (entregaDoAluno) {
+      switch (entregaDoAluno.status) {
+        case 'entregue':
+          status = 'Entregue';
+          statusClass = 'status-delivered';
+          nota = entregaDoAluno.feedback?.nota ?? '--';
+          break;
+        case 'pendente':
+          status = 'Pendente';
+          statusClass = 'status-pending';
+          nota = '--';
+          break;
+        case 'corrigida':
+          status = 'Corrigida';
+          statusClass = 'status-corrected';
+          nota = entregaDoAluno.feedback?.nota ?? '--';
+          break;
+        case 'atrasada':
+          status = 'Atrasada';
+          statusClass = 'status-late';
+          nota = '--';
+          break;
+        default:
+          status = 'Pendente';
+          statusClass = 'status-pending';
+          nota = '--';
+      }
+    } else {
+      status = 'Pendente';
+      statusClass = 'status-none';
+      nota = '--';
+    }
+
+
+
+                    // Classe CSS para nota
+                    let notaClass = '';
+                    if (nota !== '--') {
+                        if (nota >= 9) notaClass = 'excellent';
+                        else if (nota >= 7) notaClass = 'good';
+                        else if (nota >= 5) notaClass = 'regular';
+                        else notaClass = 'bad';
+                    }
+
+                    return `
+                        <div class="activity-card" data-activity-id="${atividade._id}" onclick="location.href='atividadeDetalhe.html?id=${atividade._id}'">
+                            <div class="activity-icon"><i class="fas fa-${icon}"></i></div>
+                            ${nota !== '--' ? `<div class="grade-badge ${notaClass}">${nota}</div>` : ''}
+                            <h3>${atividade.titulo}</h3>
+                            <p><i class="fas fa-users"></i> ${atividade.turmas?.[0]?.nome || 'Turma não especificada'}</p>
+                            ${entregueEm
+                                ? `<p><i class="fas fa-check-circle"></i> Entregue: ${entregueEm}</p>`
+                               : `<p><i class="far fa-calendar"></i> Prazo: ${formatarData(atividade.dataEntrega)}</p>`
+
+                            }
+                            <p><i class="fas fa-clock"></i> Valor: ${atividade.valor || 0} pontos</p>
+                            <span class="status ${statusClass}">
+                                <i class="fas fa-${status === 'Concluído' ? 'check-circle' : status === 'Pendente' ? 'clock' : 'exclamation-circle'}"></i> ${status}
+                            </span>
+                        </div>
+                    `;
+                }).join('');
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            errorMessage.textContent = 'Erro ao carregar atividades. Tente recarregar a página.';
+            errorMessage.style.display = 'block';
+        } finally {
+            loadingSpinner.style.display = 'none';
+        }
+    }
+
+    // Ícones por matéria
+    function getMateriaIcon(materiaNome) {
+        const map = {
+            'matemática': 'square-root-alt',
+            'português': 'book',
+            'história': 'landmark',
+            'geografia': 'globe-americas',
+            'ciências': 'flask',
+            'física': 'atom',
+            'química': 'flask-vial',
+            'biologia': 'dna',
+            'inglês': 'language',
+            'espanhol': 'language',
+            'educação física': 'dumbbell',
+            'artes': 'palette',
+            'filosofia': 'brain',
+            'sociologia': 'users'
+        };
+
+        const nomeLower = materiaNome.toLowerCase();
+        return map[nomeLower] || '';
+    }
+
+    // Formata data para pt-BR
+    function formatarData(dataString) {
+        if (!dataString) return '--';
+        const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+        return new Date(dataString).toLocaleDateString('pt-BR', options);
+    }
+
+    // Inicializa com todas as atividades
+    loadActivities();
+
+    // Filtrar atividades pelo select
+    filterSelect.addEventListener('change', e => {
+        loadActivities(e.target.value);
+    });
+
+    // Logout
+    document.getElementById('logout').addEventListener('click', e => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+    });
+});
+
+    </script>
+</body>
+</html>

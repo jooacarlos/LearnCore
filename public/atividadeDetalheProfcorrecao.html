@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <title>Plataforma Educacional - Detalhes da Atividade</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="./css/atividadeDetalhe.css">
+    <meta name="viewport" content="width=device-width" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+   
+  </head>
+  <body>
+    <!-- Sidebar Base -->
+    <aside class="sidebar">
+      <div class="logo">LeanCore</div>
+      <nav>
+        <ul class="sidebar-nav">
+          <li><a href="./dashBoardProf.html" ><i class="fas fa-home"></i> Dashboard</a></li>
+          <li><a href="./turmasProf.html"><i class="fas fa-users"></i> Turmas</a></li>
+          <li><a href="./atividadesProf.html" class="active"><i class="fas fa-tasks"></i> Atividades</a></li>
+            <li><a href="./mensagem.html"><i class="fas fa-envelope"></i> Mensagens</a></li>
+          <li><a href="./dadosProf.html"><i class="fas fa-cog"></i> Configurações</a></li>
+       
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Header Base -->
+    <header class="header">
+      <h1>Detalhes da Atividade</h1>
+      <div class="header-right">
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Pesquisar...">
+        </div>
+        <div class="notifications">
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge">2</span>
+        </div>
+        <div class="user-profile">
+          <img src="https://i.pravatar.cc/32" alt="Foto do perfil" class="avatar">
+          <span id="professorName">Carregando...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Activity Details -->
+      <div class="activity-card">
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-2xl font-bold" id="activityTitle">Carregando atividade...</h1>
+          <div>
+            <span class="text-red-500 mr-4" id="deliveryDate">
+              <i class="fas fa-clock mr-2"></i>
+              Entrega: --
+            </span>
+            <span class="text-green-500" id="statusBadge">
+              <i class="fas fa-check-circle mr-2"></i>
+              Status
+            </span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-8">
+          <div>
+            <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3" 
+                 alt="Imagem da atividade" 
+                 class="w-full rounded-lg mb-4" id="activityImage">
+            
+            <div class="bg-blue-50 p-4 rounded-lg mb-4">
+              <h3 class="font-semibold mb-2">Informações da Atividade</h3>
+              <p id="studentName"><strong>Aluno:</strong> --</p>
+              <p id="classInfo"><strong>Turma:</strong> --</p>
+              <p id="pointsInfo"><strong>Pontuação:</strong> -- pontos</p>
+              <p id="submitDate"><strong>Data de Envio:</strong> --</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-semibold mb-3">Descrição da Atividade</h3>
+            <p class="text-gray-700 mb-6" id="activityDescription">
+              Carregando descrição...
+            </p>
+
+            <h3 class="font-semibold mb-3">Material de Apoio</h3>
+            <div class="bg-gray-50 p-4 rounded-lg mb-4" id="supportMaterials">
+              <div class="flex items-center">
+                <i class="fas fa-file-pdf text-red-500 mr-2"></i>
+                <span>Nenhum material disponível</span>
+              </div>
+            </div>
+
+            <h3 class="font-semibold mb-3">Trabalho Enviado pelo Aluno</h3>
+            <div class="bg-gray-50 p-4 rounded-lg mb-4" id="studentWorkContainer">
+              <div class="flex items-center mb-2">
+                <i class="fas fa-file-word text-blue-500 mr-2"></i>
+                <span>Nenhum trabalho enviado</span>
+              </div>
+              <p class="text-sm text-gray-500" id="submitDateTime">--</p>
+            </div>
+
+            <div class="mt-4" id="studentCommentsContainer">
+              <label class="block mb-2 font-semibold">Comentários do Aluno:</label>
+              <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                <p id="studentComments">Nenhum comentário fornecido pelo aluno.</p>
+              </div>
+            </div>
+
+            <div class="mt-6" id="feedbackContainer">
+              <label class="block mb-2 font-semibold">Seu comentário:</label>
+              <textarea id="feedbackText" placeholder="Digite seus comentários sobre a atividade..." class="w-full p-2 border rounded h-24 mb-4"></textarea>
+              
+              <label class="block mb-2 font-semibold">Atribuir Nota:</label>
+              <div class="flex items-center mb-4">
+                <input type="number" id="gradeInput" min="0" max="100" placeholder="0-10" class="p-2 border rounded w-20 mr-2">
+                <span id="maxPoints">/ 100 pontos</span>
+              </div>
+            </div>
+
+            <button id="submitButton" class="btn w-full mt-4">
+              <i class="fas fa-check-circle mr-2"></i>
+              Enviar Avaliação
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+  document.addEventListener('DOMContentLoaded', async function() {
+    // Elementos da página
+    const professorName = document.getElementById('professorName');
+    const activityTitle = document.getElementById('activityTitle');
+    const deliveryDate = document.getElementById('deliveryDate');
+    const statusBadge = document.getElementById('statusBadge');
+    const studentName = document.getElementById('studentName');
+    const classInfo = document.getElementById('classInfo');
+    const pointsInfo = document.getElementById('pointsInfo');
+    const submitDate = document.getElementById('submitDate');
+    const activityImage = document.getElementById('activityImage');
+    const activityDescription = document.getElementById('activityDescription');
+    const supportMaterials = document.getElementById('supportMaterials');
+    const studentWorkContainer = document.getElementById('studentWorkContainer');
+    const submitDateTime = document.getElementById('submitDateTime');
+    const studentComments = document.getElementById('studentComments');
+    const feedbackText = document.getElementById('feedbackText');
+    const gradeInput = document.getElementById('gradeInput');
+    const maxPoints = document.getElementById('maxPoints');
+    const submitButton = document.getElementById('submitButton');
+    const feedbackContainer = document.getElementById('feedbackContainer');
+    const studentCommentsContainer = document.getElementById('studentCommentsContainer');
+
+    // Função utilitária para fetch com token
+    async function fetchComToken(url, options = {}) {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Você precisa estar logado para acessar esta página.');
+        window.location.href = './login.html';
+        throw new Error('Token ausente');
+      }
+
+      return fetch(url, {
+        ...options,
+        headers: {
+          ...options.headers,
+          'Authorization': `Bearer ${token}`
+        }
+      });
+    }
+
+   const urlParams = new URLSearchParams(window.location.search);
+const activityId = urlParams.get('atividadeId') || urlParams.get('id'); // <- tenta os dois
+const alunoId = urlParams.get('alunoId');
+
+
+
+    if (!activityId) {
+      console.error('ID da atividade não encontrado na URL');
+      activityTitle.textContent = 'Atividade não encontrada';
+      return;
+    }
+
+    try {
+       const professorResponse = await fetchComToken('http://localhost:3000/api/users/me');
+  const professorData = await professorResponse.json();
+
+  if (!professorData.success) {
+    throw new Error('Erro ao carregar dados do professor');
+  }
+
+  professorName.textContent = professorData.data.fullName;
+
+  // Atualiza avatar do professor
+  const avatarEl = document.querySelector('.user-profile img');
+  if (avatarEl && professorData.data.avatar) {
+    const avatarPath = professorData.data.avatar.replace(/\\/g, '/');
+    avatarEl.src = avatarPath.startsWith('http')
+      ? avatarPath
+      : `http://localhost:3000/${avatarPath}`;
+  } else {
+    avatarEl.src = `https://i.pravatar.cc/40?u=${professorData.data.email}`;
+  }
+      // Carregar dados da atividade
+     const activityResponse = await fetchComToken(`http://localhost:3000/api/tarefas/${activityId}`);
+
+      const activityData = await activityResponse.json();
+
+      if (!activityData.success) {
+        throw new Error('Erro ao carregar dados da atividade');
+      }
+
+      const activity = activityData.data;
+      const delivery = activity.entregas ? activity.entregas[0] : null;
+
+      activityTitle.textContent = activity.titulo;
+
+      const deliveryDateObj = new Date(activity.dataEntrega);
+      const formattedDeliveryDate = deliveryDateObj.toLocaleDateString('pt-BR');
+      deliveryDate.innerHTML = `<i class="fas fa-clock mr-2"></i>Entrega: ${formattedDeliveryDate}`;
+
+      if (activity.status === 'corrigida') {
+        statusBadge.innerHTML = `<i class="fas fa-check-circle mr-2"></i>Corrigida`;
+        statusBadge.className = 'text-green-500';
+      } else if (delivery) {
+        statusBadge.innerHTML = `<i class="fas fa-check-circle mr-2"></i>Entregue`;
+        statusBadge.className = 'text-green-500';
+      } else {
+        statusBadge.innerHTML = `<i class="fas fa-clock mr-2"></i>Pendente`;
+        statusBadge.className = 'text-yellow-500';
+      }
+
+      if (activity.alunosAtribuidos?.length > 0) {
+        const student = activity.alunosAtribuidos[0];
+        studentName.innerHTML = `<strong>Aluno:</strong> ${student.fullName}`;
+      } else {
+        studentName.innerHTML = `<strong>Aluno:</strong> Nenhum aluno atribuído`;
+      }
+
+      if (activity.turmas?.length > 0) {
+        const turma = activity.turmas[0];
+        classInfo.innerHTML = `<strong>Turma:</strong> ${turma.nome}`;
+      } else {
+        classInfo.innerHTML = `<strong>Turma:</strong> Nenhuma turma atribuída`;
+      }
+
+      pointsInfo.innerHTML = `<strong>Pontuação:</strong> ${activity.valor || 0} pontos`;
+      maxPoints.textContent = `/ ${activity.valor || 100} pontos`;
+      gradeInput.max = activity.valor || 100;
+
+      if (delivery) {
+        const submitDateObj = new Date(delivery.dataEntrega);
+        const formattedSubmitDate = submitDateObj.toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        submitDate.innerHTML = `<strong>Data de Envio:</strong> ${formattedSubmitDate}`;
+        submitDateTime.textContent = `Enviado em ${formattedSubmitDate}`;
+      } else {
+        submitDate.style.display = 'none';
+        submitDateTime.style.display = 'none';
+      }
+
+      if (activity.imagemUrl) {
+        activityImage.src = activity.imagemUrl;
+      } else {
+        activityImage.style.display = 'none';
+      }
+
+      activityDescription.textContent = activity.descricao || 'Nenhuma descrição fornecida.';
+
+      if (activity.anexos?.length > 0) {
+        supportMaterials.innerHTML = '';
+        activity.anexos.forEach(anexo => {
+          const fileDiv = document.createElement('div');
+          fileDiv.className = 'flex items-center mb-2';
+
+          let iconClass;
+          if (anexo.mimetype?.includes('pdf')) iconClass = 'fa-file-pdf text-red-500';
+          else if (anexo.mimetype?.includes('word')) iconClass = 'fa-file-word text-blue-500';
+          else iconClass = 'fa-file-alt text-gray-500';
+
+          fileDiv.innerHTML = `
+            <i class="fas ${iconClass} mr-2"></i>
+            <span>${anexo.nomeOriginal || 'Arquivo'}</span>
+            <a href="${anexo.url}" download class="ml-2 text-blue-500 hover:underline">Download</a>
+          `;
+          supportMaterials.appendChild(fileDiv);
+        });
+      } else {
+        supportMaterials.innerHTML = `
+          <div class="flex items-center">
+            <i class="fas fa-info-circle text-gray-500 mr-2"></i>
+            <span>Nenhum material de apoio disponível</span>
+          </div>
+        `;
+      }
+
+      if (delivery) {
+        studentWorkContainer.innerHTML = '';
+
+        if (delivery.anexos?.length > 0) {
+          delivery.anexos.forEach(anexo => {
+            const fileDiv = document.createElement('div');
+            fileDiv.className = 'flex items-center mb-2';
+
+            let iconClass;
+            if (anexo.mimetype?.includes('pdf')) iconClass = 'fa-file-pdf text-red-500';
+            else if (anexo.mimetype?.includes('word')) iconClass = 'fa-file-word text-blue-500';
+            else iconClass = 'fa-file-alt text-gray-500';
+
+            fileDiv.innerHTML = `
+              <i class="fas ${iconClass} mr-2"></i>
+              <span>${anexo.nomeOriginal || 'Arquivo enviado'}</span>
+              <a href="${anexo.url}" download class="ml-2 text-blue-500 hover:underline">Download</a>
+            `;
+            studentWorkContainer.appendChild(fileDiv);
+          });
+        } else if (delivery.respostaTexto) {
+          const textResponseDiv = document.createElement('div');
+          textResponseDiv.className = 'flex items-center mb-2';
+          textResponseDiv.innerHTML = `
+            <i class="fas fa-file-alt text-gray-500 mr-2"></i>
+            <span>Resposta textual do aluno</span>
+          `;
+          studentWorkContainer.appendChild(textResponseDiv);
+        } else {
+          studentWorkContainer.innerHTML = `
+            <div class="flex items-center">
+              <i class="fas fa-info-circle text-gray-500 mr-2"></i>
+              <span>Nenhum trabalho enviado</span>
+            </div>
+          `;
+        }
+
+        if (delivery.respostaTexto) {
+          studentComments.textContent = delivery.respostaTexto;
+        } else {
+          studentCommentsContainer.style.display = 'none';
+        }
+
+      if (delivery.feedback && delivery.feedback.texto && delivery.feedback.nota != null) {
+  feedbackText.value = delivery.feedback.texto;
+  gradeInput.value = delivery.feedback.nota;
+
+  feedbackText.disabled = true;
+  gradeInput.disabled = true;
+  submitButton.disabled = true;
+  submitButton.textContent = 'Atividade já corrigida';
+  submitButton.className = 'btn bg-gray-400 cursor-not-allowed w-full mt-4';
+
+  statusBadge.innerHTML = `<i class="fas fa-check-circle mr-2"></i>Corrigida`;
+  statusBadge.className = 'text-green-500';
+}
+
+      } else {
+        studentWorkContainer.innerHTML = `
+          <div class="flex items-center">
+            <i class="fas fa-info-circle text-gray-500 mr-2"></i>
+            <span>O aluno ainda não enviou esta atividade.</span>
+          </div>
+        `;
+        submitDateTime.style.display = 'none';
+        studentCommentsContainer.style.display = 'none';
+        feedbackContainer.style.display = 'none';
+        submitButton.disabled = true;
+        submitButton.textContent = 'Aguardando entrega';
+        submitButton.className = 'btn bg-gray-400 cursor-not-allowed w-full mt-4';
+      }
+
+      // Evento de envio do feedback
+      submitButton.addEventListener('click', async () => {
+        const feedback = feedbackText.value.trim();
+        const nota = parseInt(gradeInput.value);
+
+        if (!feedback || isNaN(nota) || nota < 0 || nota > activity.valor) {
+          alert(`Por favor, preencha o feedback e uma nota válida (0-${activity.valor})`);
+          return;
+        }
+
+        try {
+          const studentId = alunoId;
+
+
+          if (!studentId) {
+            throw new Error('Nenhum aluno encontrado para esta atividade');
+          }
+
+          const response = await fetchComToken(`http://localhost:3000/api/tarefas/${activityId}/corrigir/${studentId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              nota,
+              feedback
+            })
+          });
+
+          const result = await response.json();
+
+       if (result.success) {
+  alert('Feedback enviado com sucesso!');
+
+  // Atualiza o status da atividade para corrigida
+  statusBadge.innerHTML = `<i class="fas fa-check-circle mr-2"></i>Corrigida`;
+  statusBadge.className = 'text-green-500';
+
+  // Desabilita os campos
+  feedbackText.disabled = true;
+  gradeInput.disabled = true;
+  submitButton.disabled = true;
+
+  // Muda o texto e estilo do botão
+  submitButton.textContent = 'Atividade já corrigida';
+  submitButton.className = 'btn bg-gray-400 cursor-not-allowed w-full mt-4';
+}
+else {
+            throw new Error(result.message || 'Erro ao enviar feedback');
+          }
+        } catch (error) {
+          console.error('Erro ao enviar feedback:', error);
+          alert('Erro ao enviar feedback: ' + error.message);
+        }
+      });
+
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error);
+      activityTitle.textContent = 'Erro ao carregar atividade';
+      activityDescription.textContent = error.message;
+    }
+  });
+</script>
+
+  </body>
+</html>

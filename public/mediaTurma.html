@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Professor</title>
+    <link rel="stylesheet" href="./css/mediaTurma.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset Básico */
+        
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>Painel do Professor</h1>
+        <div class="header-right">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Buscar aluno...">
+            </div>
+            <div class="notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="user-profile">
+                <img src="https://i.pravatar.cc/32" alt="Foto do perfil" class="avatar">
+                <span>Prof. Maria Santos</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Cards de Estatísticas -->
+        <div class="stats">
+            <div class="card">
+                <div class="card-content">
+                    <h3>Total de Alunos</h3>
+                    <p>5</p>
+                </div>
+                <div class="card-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <h3>Média da Turma</h3>
+                    <p>85%</p>
+                </div>
+                <div class="card-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <h3>Total de Atividades</h3>
+                    <p>180</p>
+                </div>
+                <div class="card-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <h3>Taxa de Conclusão</h3>
+                    <p>75%</p>
+                </div>
+                <div class="card-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela de Alunos -->
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Alunos</h2>
+                <a href="#">Ver todos ></a>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ALUNO</th>
+                        <th>PROGRESSO</th>
+                        <th>ATIVIDADE</th>
+                        <th>TAXA DE ACERTO</th>
+                        <th>PONTUAÇÃO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="profile">
+                                <img src="https://i.pravatar.cc/40?img=1" alt="Maria Silva">
+                                <span>Maria Silva</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 85%;"></div>
+                            </div>
+                            8.5 de 10 módulos
+                        </td>
+                        <td>48 atividades</td>
+                        <td><span class="accuracy green">95%</span></td>
+                        <td class="points">3000 pts</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="profile">
+                                <img src="https://i.pravatar.cc/40?img=2" alt="João Santos">
+                                <span>João Santos</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 70%;"></div>
+                            </div>
+                            7 de 10 módulos
+                        </td>
+                        <td>38 atividades</td>
+                        <td><span class="accuracy orange">88%</span></td>
+                        <td class="points">2400 pts</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="profile">
+                                <img src="https://i.pravatar.cc/40?img=3" alt="Ana Oliveira">
+                                <span>Ana Oliveira</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 60%;"></div>
+                            </div>
+                            6 de 10 módulos
+                        </td>
+                        <td>35 atividades</td>
+                        <td><span class="accuracy orange">85%</span></td>
+                        <td class="points">2100 pts</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="profile">
+                                <img src="https://i.pravatar.cc/40?img=4" alt="Pedro Costa">
+                                <span>Pedro Costa</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 90%;"></div>
+                            </div>
+                            9 de 10 módulos
+                        </td>
+                        <td>50 atividades</td>
+                        <td><span class="accuracy green">98%</span></td>
+                        <td class="points">3200 pts</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="profile">
+                                <img src="https://i.pravatar.cc/40?img=5" alt="Lucas Mendes">
+                                <span>Lucas Mendes</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 40%;"></div>
+                            </div>
+                            4 de 10 módulos
+                        </td>
+                        <td>25 atividades</td>
+                        <td><span class="accuracy red">65%</span></td>
+                        <td class="points">1500 pts</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>

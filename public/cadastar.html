@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadastro Aluno</title>
+  <link rel="stylesheet" href="./css/cadastrar.css"/>
+</head>
+<body>
+  <!-- Botão para voltar -->
+  <a href="alunoProf.html">
+    <button class="back-button" onclick="window.history.back()">←</button>
+  </a>
+
+  <div class="login-container">
+    <h1>Cadastro Aluno</h1>
+    <form id="signupForm">
+      <input type="text" id="firstName" placeholder="Nome" required />
+      <input type="text" id="lastName" placeholder="Sobrenome" required />
+      <input type="text" id="matricula" placeholder="Matrícula" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Senha" required />
+      <input type="password" id="confirmPassword" placeholder="Confirmar Senha" required />
+      <button type="submit">Cadastrar</button>
+    </form>
+    <div class="forgot-password">
+      <a href="loginAluno.html">Já tem uma conta? Faça login.</a>
+    </div>
+  </div>
+  
+      <!-- Ícone ou texto para abrir o card -->
+<div id="privacyIcon" style="position: fixed; bottom: 20px; right: 20px; cursor: pointer; z-index: 1000; background: #007bff; color: white; padding: 10px 15px; border-radius: 8px; font-weight: bold;">
+    Política de Privacidade
+</div>
+
+<!-- Overlay do card -->
+<div id="privacyOverlay" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:999;">
+    <div style="background: #fff; padding: 25px; border-radius: 12px; max-width: 500px; width: 90%; text-align:left; position: relative;">
+        <h3>Política de Privacidade</h3>
+        <p style="color: black;">
+            Ao se cadastrar, você concorda com nossa política de privacidade. 
+            Seus dados serão utilizados apenas para fins de contato e informações sobre o nosso serviço.
+        </p>
+        <button id="closePrivacy" style="position:absolute; top:10px; right:10px; background:#ff4d4f; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">X</button>
+    </div>
+</div>
+
+<script>
+    const privacyIcon = document.getElementById('privacyIcon');
+    const privacyOverlay = document.getElementById('privacyOverlay');
+    const closePrivacy = document.getElementById('closePrivacy');
+
+    // Ao clicar no ícone, mostrar o card
+    privacyIcon.addEventListener('click', () => {
+        privacyOverlay.style.display = 'flex';
+    });
+
+    // Ao clicar no X, fechar o card
+    closePrivacy.addEventListener('click', () => {
+        privacyOverlay.style.display = 'none';
+    });
+
+    // Ao clicar fora do card, também fecha
+    privacyOverlay.addEventListener('click', (e) => {
+        if (e.target === privacyOverlay) {
+            privacyOverlay.style.display = 'none';
+        }
+    });
+</script>
+
+
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const matricula = document.getElementById('matricula').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      // Validações
+      if (firstName.length < 3 || lastName.length < 3) {
+        alert('Nome e sobrenome devem ter pelo menos 3 caracteres.');
+        return;
+      }
+
+      if (!matricula) {
+        alert('Matrícula é obrigatória.');
+        return;
+      }
+
+      if (password.length < 6 || password.length > 20) {
+        alert('A senha deve ter entre 6 e 20 caracteres.');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        alert('As senhas não coincidem.');
+        return;
+      }
+
+      const data = {
+        firstName,
+        lastName,
+        email,
+        password,
+        confirmPassword,
+        role: 'aluno',
+        matricula
+      };
+
+      try {
+        const response = await fetch('http://localhost:3000/api/users/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+if (response.ok) {
+  console.log('Cadastro realizado com sucesso!');
+  window.location.href = 'loginAluno.html';
+}
+else {
+          alert(`Erro: ${result.message}`);
+        }
+
+      } catch (err) {
+        
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
