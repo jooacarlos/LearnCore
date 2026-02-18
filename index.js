@@ -13,6 +13,8 @@ import rateLimit from 'express-rate-limit';
 import morgan from 'morgan';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./src/config/swagger.js";
 
 // Custom Modules
 import { errorHandler } from './src/utils/errorHandler.js';
@@ -74,6 +76,8 @@ app.use((req, res, next) => {
   req.io = io;
   next();
 });
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // MongoDB
 if (!process.env.MONGO_URI) {
